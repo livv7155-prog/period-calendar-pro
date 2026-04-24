@@ -1,0 +1,3697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>养身小医 - 女性生理期健康管理</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #faf8f5;
+            min-height: 100vh;
+            padding: 20px;
+            color: #5a4a4a;
+        }
+
+        .container { max-width: 800px; margin: 0 auto; }
+
+        .header {
+            text-align: center;
+            padding: 25px 20px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .header h1 { font-size: 26px; color: #d48a8a; margin-bottom: 6px; }
+        .header p { font-size: 13px; color: #a89a9a; }
+        .user-status {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .user-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #eddede;
+            border-radius: 999px;
+            padding: 7px 12px;
+            background: #fff8f8;
+            font-size: 12px;
+            color: #866d6d;
+            cursor: pointer;
+        }
+        .logout-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 7px 12px;
+            background: #f7e6e6;
+            color: #9a7a7a;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .profile-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 7px 12px;
+            background: #f1e7f8;
+            color: #7d6795;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #e8a8a8;
+            border-radius: 16px;
+            font-size: 12px;
+            color: #d48a8a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn:hover { background: #e8a8a8; color: white; }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            overflow-x: auto;
+            padding: 5px 0;
+            animation: fadeIn 0.7s ease;
+        }
+
+        .nav-tab {
+            padding: 10px 16px;
+            background: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 14px;
+            color: #8a7a7a;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .nav-tab:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .nav-tab.active { background: linear-gradient(135deg, #e8a8a8, #d48a8a); color: white; }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 16px;
+            box-shadow: 0 3px 16px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        .card-title { font-size: 16px; color: #d48a8a; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .calendar-header h3 { font-size: 17px; color: #d48a8a; }
+        .calendar-nav button {
+            padding: 8px 12px;
+            background: #f8f0f5;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 8px;
+        }
+        .calendar-nav button:hover { background: #e8a8a8; color: white; }
+
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+        .calendar-day-header { text-align: center; font-size: 11px; color: #a89a9a; padding: 4px 0; }
+
+        .calendar-day {
+            aspect-ratio: 1.1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: #faf7f3;
+            color: #6d5d5d;
+            position: relative;
+            padding: 2px;
+        }
+
+        .calendar-day:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .calendar-day.period { background: #fce8e8; color: #a86060; }
+        .calendar-day.period::after { content: ''; position: absolute; bottom: 3px; width: 5px; height: 5px; border-radius: 50%; background: #d48a8a; }
+        .calendar-day.predicted { background: #eef3ff; color: #6a7f9f; border: 1px dashed #b8c8e0; }
+        .calendar-day.predicted::after { content: '预'; position: absolute; top: 2px; right: 4px; font-size: 8px; color: #8fa0c0; }
+        .calendar-day.ovulation { background: #e4f0fc; color: #5f8fbf; }
+        .calendar-day.follicular { background: #ecf7ec; color: #5d8f5d; }
+        .calendar-day.luteal { background: #faf3e8; color: #8c7a5d; }
+        .calendar-day.today { border: 2px solid #d48a8a; background: #fff8f8; }
+        .calendar-day.selected { box-shadow: 0 0 0 2.5px #c79393 inset; background: #fff5f5; }
+        .calendar-day.other-month { color: #c6bbbb; background: #f9f6f3; }
+        .holiday-tag { font-size: 8px; padding: 1px 3px; border-radius: 4px; margin-left: 2px; line-height: 1.3; vertical-align: middle; display: inline-block; max-width: 38px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: #f5ebe0; color: #8a6a5a; }
+
+        .legend { display: flex; gap: 12px; margin-top: 15px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #8a7a7a; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .legend-dot.period { background: #f5d0d0; }
+        .legend-dot.ovulation { background: #c0d8f5; }
+        .legend-dot.follicular { background: #c8e5c8; }
+        .legend-dot.luteal { background: #f0e0c8; }
+        .legend-dot.predicted { background: #d5dff0; border: 1px dashed #a0b0d0; }
+
+        .today-status {
+            margin-top: 12px;
+            background: #fffaf5;
+            border: 1px solid #f1e5d9;
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .today-status h4 { font-size: 14px; color: #7d6666; margin-bottom: 6px; }
+        .today-status p { font-size: 12px; color: #907f7f; line-height: 1.5; }
+
+        .record-form { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .record-item { background: #faf5f5; border-radius: 10px; padding: 12px; }
+        .record-item label { display: block; font-size: 13px; color: #8a7a7a; margin-bottom: 8px; }
+        .record-item select, .record-item input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e8e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            background: white;
+        }
+
+        .color-picker-container { display: flex; flex-direction: column; gap: 12px; }
+
+        .preset-colors {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .preset-color-btn {
+            width: 100%;
+            height: 30px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .preset-color-btn:hover { transform: translateY(-1px); }
+        .preset-color-btn.active { border-color: #5a4a4a; }
+
+        .color-tools-row {
+            display: grid;
+            grid-template-columns: 56px 1fr;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            transition: background 0.2s ease;
+        }
+
+        .rgb-group { display: flex; flex-direction: column; gap: 8px; }
+        .rgb-row { display: grid; grid-template-columns: 18px 1fr 34px; gap: 8px; align-items: center; font-size: 12px; color: #6a5a5a; }
+        .rgb-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .record-submit {
+            grid-column: span 2;
+            padding: 12px;
+            background: linear-gradient(135deg, #e8a8a8, #d48a8a);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .record-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(212, 138, 138, 0.3); }
+
+        .reminder-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0e8e8; }
+        .reminder-item:last-child { border-bottom: none; }
+        .reminder-info h4 { font-size: 14px; color: #5a4a4a; margin-bottom: 4px; }
+        .reminder-info p { font-size: 12px; color: #a89a9a; }
+
+        .toggle-switch { position: relative; width: 48px; height: 24px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #e8e0e0;
+            border-radius: 24px;
+            transition: 0.3s;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .toggle-switch input:checked + .toggle-slider { background: #e8a8a8; }
+        .toggle-switch input:checked + .toggle-slider:before { transform: translateX(24px); }
+
+        .health-card {
+            background: linear-gradient(135deg, #fff8f8, #fff2f2);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid #e8b8b8;
+        }
+        .health-card h4 { font-size: 14px; color: #d48a8a; margin-bottom: 10px; font-weight: 500; }
+        .health-card ul { list-style: none; padding-left: 0; }
+        .health-card li { font-size: 13px; color: #6a5a5a; padding: 5px 0; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+        .health-card li::before { content: "•"; color: #e8a8a8; font-weight: bold; font-size: 14px; }
+        .acupoint-item { background: #fffdfb; border-radius: 14px; padding: 14px; margin-bottom: 10px; border: 1px solid #f5f0ee; }
+        .acupoint-item:last-child { margin-bottom: 0; }
+        .acupoint-name { font-size: 14px; color: #d48a8a; font-weight: 600; margin-bottom: 5px; }
+        .acupoint-position { font-size: 12px; color: #7a6a6a; margin-bottom: 3px; }
+        .acupoint-effect { font-size: 12px; color: #5a4a4a; line-height: 1.5; }
+
+        .post-btn {
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #e8a8a8, #d48a8a);
+            border: none;
+            border-radius: 18px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .post-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(212, 138, 138, 0.3); }
+        .cloud-btn {
+            padding: 8px 12px;
+            border: 1px solid #eadcdc;
+            border-radius: 14px;
+            background: #fff7f7;
+            color: #8f7676;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .cloud-status {
+            font-size: 11px;
+            color: #9a8a8a;
+            margin-top: 6px;
+        }
+
+        .post-list { list-style: none; }
+        .post-item { padding: 16px; border-bottom: 1px solid #f5f0f0; transition: all 0.25s ease; border-radius: 14px; margin-bottom: 8px; background: #fdfcfb; }
+        .post-item:hover { background: #faf7f5; transform: translateY(-1px); }
+        .post-item:last-child { border-bottom: none; }
+
+        .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .post-author { display: flex; align-items: center; gap: 10px; }
+        .post-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #eab8b8, #d48a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 15px;
+            box-shadow: 0 3px 10px rgba(212,138,138,0.25);
+        }
+        .post-name { font-size: 13px; color: #5a4a4a; font-weight: 500; }
+        .post-time { font-size: 11px; color: #a89a9a; }
+        .post-content { font-size: 13px; color: #6a5a5a; line-height: 1.7; margin-bottom: 12px; }
+        .post-list-thumb {
+            width: 100%;
+            max-width: 180px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 10px;
+        }
+        .post-image-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 10px; }
+        .post-image {
+            width: 130px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            cursor: pointer;
+            flex: 0 0 auto;
+        }
+        .post-upload-wrap { margin-top: 10px; }
+        .upload-btn {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #f7e9e9;
+            color: #8a6a6a;
+            cursor: pointer;
+            font-size: 12px;
+            border: 1px solid #efdede;
+        }
+        .upload-hint { font-size: 11px; color: #a08f8f; margin-top: 6px; }
+        .upload-preview-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .upload-preview-item { position: relative; }
+        .upload-preview-item img {
+            width: 78px;
+            height: 78px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .upload-remove {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 18px;
+            height: 18px;
+            border: none;
+            border-radius: 50%;
+            background: #e38b8b;
+            color: #fff;
+            cursor: pointer;
+            font-size: 11px;
+            line-height: 1;
+        }
+        .post-actions { display: flex; gap: 12px; }
+        .post-action { display: flex; align-items: center; gap: 4px; font-size: 12px; color: #a89a9a; cursor: pointer; transition: all 0.3s ease; }
+        .post-action:hover { color: #d48a8a; }
+        .post-detail-back {
+            border: none;
+            border-radius: 8px;
+            background: #f7e6e6;
+            color: #8a6a6a;
+            padding: 6px 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .comment-section { margin-top: 12px; border-top: 1px dashed #f0e2e2; padding-top: 12px; }
+        .comment-input-wrap { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 10px; }
+        .comment-input-wrap input {
+            border: 1px solid #eadede;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 12px;
+        }
+        .comment-btn {
+            border: none;
+            border-radius: 8px;
+            background: #e8a8a8;
+            color: #fff;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .comment-item { padding: 8px; border-radius: 8px; background: #fffafb; margin-bottom: 8px; }
+        .comment-meta { font-size: 11px; color: #a08f8f; margin-bottom: 4px; }
+        .comment-content { font-size: 12px; color: #6a5a5a; margin-bottom: 6px; }
+        .reply-list { margin-left: 20px; margin-top: 6px; border-left: 2px solid #f2e4e4; padding-left: 8px; }
+        .reply-input { display: none; margin-top: 6px; }
+        .reply-input.active { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+        .reply-input input { border: 1px solid #eadede; border-radius: 8px; padding: 7px 9px; font-size: 12px; }
+        .login-hint { font-size: 12px; color: #b08787; margin: 8px 0; }
+        .admin-panel {
+            margin-top: 14px;
+            border: 1px solid #f0e4e4;
+            border-radius: 12px;
+            background: #fffafa;
+            padding: 12px;
+        }
+        .admin-panel h4 { font-size: 14px; color: #c07b7b; margin-bottom: 8px; }
+        .admin-report-item {
+            border: 1px solid #f2e7e7;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #fff;
+        }
+        .admin-report-item:last-child { margin-bottom: 0; }
+        .admin-report-meta { font-size: 12px; color: #8d7b7b; margin-bottom: 4px; }
+        .admin-report-detail { font-size: 11px; color: #9c8b8b; line-height: 1.5; }
+        .moderation-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .moderation-toolbar select {
+            border: 1px solid #e9dede;
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-size: 12px;
+            color: #7d6a6a;
+            background: #fff;
+        }
+        .moderation-toolbar input {
+            border: 1px solid #e9dede;
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-size: 12px;
+            color: #7d6a6a;
+            background: #fff;
+            min-width: 180px;
+        }
+        .mod-item {
+            border: 1px solid #f0e5e5;
+            border-radius: 10px;
+            background: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .mod-meta { font-size: 12px; color: #8f7d7d; margin-bottom: 6px; }
+        .mod-content { font-size: 13px; color: #695a5a; margin-bottom: 8px; }
+        .mod-status {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            display: inline-block;
+            margin-left: 6px;
+        }
+        .mod-status.pending { background: #fff2d9; color: #9a6f2d; }
+        .mod-status.approved { background: #e6f7ea; color: #3b7f50; }
+        .mod-status.rejected { background: #ffe8e8; color: #b04949; }
+        .mod-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .mod-actions button {
+            border: none;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .mod-approve { background: #e2f4e7; color: #3f7a53; }
+        .mod-reject { background: #ffe7e7; color: #a04d4d; }
+        .mod-delete { background: #f7e7e7; color: #8d5a5a; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            width: 90%;
+            max-width: 450px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s ease;
+        }
+
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+        .modal-header h3 { font-size: 17px; color: #d48a8a; font-weight: 500; }
+        .modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: #a89a9a; transition: all 0.3s ease; }
+        .modal-close:hover { color: #d48a8a; transform: rotate(90deg); }
+
+        .modal-step { margin-bottom: 20px; }
+        .modal-step h4 { font-size: 14px; color: #5a4a4a; margin-bottom: 10px; font-weight: 500; }
+        .modal-step input, .modal-step select { width: 100%; padding: 12px; border: 1.5px solid #ece4e4; border-radius: 12px; font-size: 14px; }
+        .modal-step input:focus, .modal-step select:focus { outline: none; border-color: #e8a8a8; }
+
+        .modal-submit {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #eab8b8, #d48a8a);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 14px rgba(212,138,138,0.25);
+        }
+        .modal-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(212,138,138,0.35); }
+        .image-viewer-content {
+            background: transparent;
+            box-shadow: none;
+            padding: 0;
+            max-width: 90vw;
+        }
+        .image-viewer-content img {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        }
+
+        .mini-calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
+        .mini-calendar .calendar-day { font-size: 12px; padding: 6px; }
+        .mini-calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .mini-calendar-nav button { padding: 6px 10px; background: #f8f0f5; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .mini-calendar-nav span { font-size: 13px; color: #d48a8a; }
+
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-size: 13px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .smart-reminder-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .smart-reminder-modal.active { display: flex; }
+        .smart-reminder-content {
+            background: white;
+            border-radius: 20px;
+            padding: 28px 24px;
+            width: 90%;
+            max-width: 380px;
+            text-align: center;
+            animation: slideUp 0.4s ease;
+            box-shadow: 0 10px 40px rgba(212,138,138,0.25);
+        }
+        .smart-reminder-icon { font-size: 48px; margin-bottom: 12px; }
+        .smart-reminder-title { font-size: 18px; color: #d48a8a; margin-bottom: 10px; font-weight: 600; }
+        .smart-reminder-desc { font-size: 13px; color: #7a6a6a; line-height: 1.6; margin-bottom: 18px; }
+        .smart-reminder-tips { background: #fff9f5; border-radius: 12px; padding: 12px; text-align: left; margin-bottom: 18px; }
+        .smart-reminder-tips h5 { font-size: 13px; color: #c07b7b; margin-bottom: 8px; }
+        .smart-reminder-tips ul { list-style: none; padding: 0; margin: 0; }
+        .smart-reminder-tips li { font-size: 12px; color: #6a5a5a; padding: 3px 0; display: flex; align-items: center; gap: 6px; }
+        .smart-reminder-tips li::before { content: "🌸"; font-size: 10px; }
+        .smart-reminder-actions { display: flex; gap: 10px; justify-content: center; }
+        .smart-reminder-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .smart-reminder-btn.primary {
+            background: linear-gradient(135deg, #e8a8a8, #d48a8a);
+            color: white;
+        }
+        .smart-reminder-btn.secondary {
+            background: #f7e6e6;
+            color: #9a7a7a;
+        }
+        .smart-reminder-btn:hover { transform: translateY(-2px); }
+        .notification-permission-hint {
+            font-size: 11px;
+            color: #a89a9a;
+            margin-top: 10px;
+        }
+        .notification-permission-hint a { color: #d48a8a; cursor: pointer; text-decoration: underline; }
+
+        .analysis-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .analysis-back-btn {
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            background: #f7e6e6;
+            color: #8a6a6a;
+            cursor: pointer;
+        }
+        .analysis-title { font-size: 20px; color: #d48a8a; font-weight: 600; }
+        .analysis-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .analysis-top h4 { color: #7a5a5a; font-size: 15px; }
+        .analysis-filter { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .analysis-filter input, .analysis-filter select {
+            border: 1px solid #eadcdc;
+            border-radius: 8px;
+            padding: 6px 8px;
+            background: #fff;
+            font-size: 12px;
+        }
+        .analysis-tabs { display: flex; gap: 8px; margin: 10px 0; }
+        .analysis-tab {
+            border: none;
+            border-radius: 16px;
+            padding: 7px 12px;
+            background: #f7ecec;
+            color: #8a6a6a;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .analysis-tab.active {
+            background: linear-gradient(135deg, #e8a8a8, #d48a8a);
+            color: #fff;
+        }
+        .chart-mode-toggle { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+        .chart-tools { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
+        .export-btn {
+            border: none;
+            border-radius: 8px;
+            padding: 7px 12px;
+            background: #f5e5e5;
+            color: #8a6666;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .export-btn:hover { background: #ecd6d6; }
+        .chart-canvas-wrap {
+            background: linear-gradient(180deg, #fffefe, #fff9f9);
+            border: 1px solid #f1e6e6;
+            border-radius: 12px;
+            padding: 8px;
+        }
+        #symptomChart { width: 100%; height: 280px; display: block; }
+        .chart-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .legend-chip { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #7a6a6a; }
+        .legend-swatch { width: 10px; height: 10px; border-radius: 50%; }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
+        .stats-card {
+            background: #fff8f5;
+            border: 1px solid #f2e6e0;
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .stats-card .value { font-size: 22px; color: #c86f6f; font-weight: 700; }
+        .stats-card .label { font-size: 12px; color: #7b6a6a; margin-top: 2px; }
+        .stats-card .desc { font-size: 11px; color: #ab9a9a; margin-top: 4px; }
+        .analysis-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .analysis-table th, .analysis-table td {
+            border-bottom: 1px solid #f0e6e6;
+            padding: 8px 6px;
+            text-align: left;
+        }
+        .analysis-table th { color: #8a6a6a; background: #fffafb; }
+        .analysis-table tr.selected { background: #fff0f0; }
+        .analysis-year-row td {
+            font-weight: 700;
+            color: #c57f7f;
+            background: #fff8f8;
+        }
+        .abnormal { color: #d9534f; font-weight: 600; }
+        .cycle-stats-grid { display: flex; gap: 12px; margin-bottom: 15px; }
+        .cycle-stats-item { flex: 1; background: linear-gradient(135deg, #fef6f6, #fdf0f0); border-radius: 14px; padding: 14px; text-align: center; }
+        .cycle-stats-label { font-size: 11px; color: #9a8a8a; margin-bottom: 4px; }
+        .cycle-stats-value { font-size: 20px; color: #d48a8a; font-weight: 600; }
+        .cycle-intervals-list { display: flex; flex-wrap: wrap; gap: 8px; }
+        .interval-tag { background: #fdf5f5; border: 1px solid #f0e4e4; border-radius: 10px; padding: 6px 12px; font-size: 12px; color: #6a5a5a; }
+        .interval-tag span { color: #d48a8a; font-weight: 500; }
+        .interval-tag.abnormal { background: #fff5f5; border-color: #f0d0d0; color: #c57f7f; }
+        .interval-tag.abnormal span { color: #d9534f; }
+        .abnormal-tag {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 6px;
+            border-radius: 10px;
+            background: #fff1f1;
+            color: #d9534f;
+            font-size: 10px;
+            vertical-align: middle;
+            cursor: help;
+        }
+        .empty-tip { text-align: center; color: #a89a9a; font-size: 12px; padding: 16px; }
+
+        .footer { text-align: center; padding: 20px; animation: fadeIn 1s ease; }
+        .footer .warning { background: #fff0f0; color: #c45a5a; padding: 10px 12px; border-radius: 8px; font-size: 11px; margin-bottom: 10px; }
+        .footer p { font-size: 11px; color: #aaa; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .header h1 { font-size: 22px; }
+            .card { padding: 16px; }
+            .record-form { grid-template-columns: 1fr; }
+            .record-submit { grid-column: span 1; }
+            .analysis-filter { justify-content: flex-start; }
+            #symptomChart { height: 230px; }
+            .calendar-grid { gap: 8px; }
+            .calendar-day { border-radius: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌸 养身小医</h1>
+            <p>温柔呵护每一位女性</p>
+            <button class="edit-btn" onclick="openInitModal()">✏️ 修改基础信息</button>
+            <div class="user-status" id="userStatusBar">
+                <span class="user-status-badge" onclick="openLoginModal()">未登录（点击登录）</span>
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('calendar', event)">📅 生理期日历</button>
+            <button class="nav-tab" onclick="switchTab('record', event)">📝 今日记录</button>
+            <button class="nav-tab" onclick="switchTab('analysis', event)">📈 历史分析</button>
+            <button class="nav-tab" onclick="switchTab('reminder', event)">🔔 提醒设置</button>
+            <button class="nav-tab" onclick="switchTab('health', event)">💡 健康科普</button>
+            <button class="nav-tab" onclick="switchTab('community', event)" style="display:none;">💬 社区</button>
+            <button class="nav-tab" id="moderationTabBtn" onclick="switchTab('moderation', event)" style="display:none;">🛡 审核后台</button>
+        </div>
+
+        <div id="calendar" class="content-section active">
+            <div class="card">
+                <div class="calendar-header">
+                    <h3 id="calendarTitle">2026年4月</h3>
+                    <div class="calendar-nav">
+                        <button onclick="prevMonth()">◀</button>
+                        <button onclick="nextMonth()">▶</button>
+                    </div>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot period"></div>月经期</div>
+                    <div class="legend-item"><div class="legend-dot follicular"></div>卵泡期</div>
+                    <div class="legend-item"><div class="legend-dot ovulation"></div>排卵期</div>
+                    <div class="legend-item"><div class="legend-dot luteal"></div>黄体期</div>
+                    <div class="legend-item"><div class="legend-dot predicted"></div>预测经期</div>
+                </div>
+                <p style="font-size:12px; color:#a89a9a; margin-top:10px; text-align:center;">单击查看阶段信息，双击可快速标记/取消月经期</p>
+                <div class="today-status" id="todayStatus">
+                    <h4>今日状态</h4>
+                    <p id="todayStatusText">请选择日期查看阶段说明</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="record" class="content-section">
+            <div class="card">
+                <div class="card-title">📝 症状记录</div>
+                <div class="record-form">
+                    <div class="record-item" style="grid-column: span 2;">
+                        <label>记录日期</label>
+                        <input type="date" id="recordDate" max="">
+                    </div>
+                    <div class="record-item">
+                        <label>身体状态</label>
+                        <select id="bodyStatus">
+                            <option value="">请选择</option>
+                            <option value="良好">良好</option>
+                            <option value="一般">一般</option>
+                            <option value="不适">不适</option>
+                        </select>
+                    </div>
+                    <div class="record-item">
+                        <label>情绪状态</label>
+                        <select id="moodStatus" onchange="toggleCustomMood(this.value)">
+                            <option value="">请选择</option>
+                            <option value="开心">开心</option>
+                            <option value="平静">平静</option>
+                            <option value="疲惫">疲惫</option>
+                            <option value="焦虑">焦虑</option>
+                            <option value="烦躁">烦躁</option>
+                            <option value="低落">低落</option>
+                            <option value="痛经不适">痛经不适</option>
+                            <option value="失眠">失眠</option>
+                            <option value="易怒">易怒</option>
+                            <option value="其他">其他（请填写）</option>
+                        </select>
+                        <input type="text" id="customMood" placeholder="自定义情绪描述..." style="margin-top:6px;display:none;">
+                    </div>
+                    <div class="record-item">
+                        <label>痛经程度</label>
+                        <select id="painLevel">
+                            <option value="">请选择</option>
+                            <option value="无痛经">无痛经</option>
+                            <option value="轻微">轻微</option>
+                            <option value="中等">中等</option>
+                            <option value="严重">严重</option>
+                        </select>
+                    </div>
+                    <div class="record-item">
+                        <label>经期流量</label>
+                        <select id="flowLevel">
+                            <option value="">请选择</option>
+                            <option value="极少">极少</option>
+                            <option value="偏少">偏少</option>
+                            <option value="正常">正常</option>
+                            <option value="偏多">偏多</option>
+                            <option value="很多">很多</option>
+                        </select>
+                    </div>
+                    <div class="record-item">
+                        <label>经血颜色</label>
+                        <div class="color-picker-container">
+                            <div class="preset-colors" id="presetColors">
+                                <button type="button" class="preset-color-btn" data-color="#8b1f2e" style="background:#8b1f2e;" title="深红"></button>
+                                <button type="button" class="preset-color-btn" data-color="#b8303d" style="background:#b8303d;" title="鲜红"></button>
+                                <button type="button" class="preset-color-btn" data-color="#c9575e" style="background:#c9575e;" title="暗红"></button>
+                                <button type="button" class="preset-color-btn" data-color="#7a2b3b" style="background:#7a2b3b;" title="棕红"></button>
+                                <button type="button" class="preset-color-btn" data-color="#a04a5c" style="background:#a04a5c;" title="玫瑰红"></button>
+                            </div>
+                            <div class="color-tools-row">
+                                <div class="color-preview" id="colorPreview" style="background:#b8303d;"></div>
+                                <input type="color" id="nativeColorPicker" value="#b8303d">
+                            </div>
+                            <div class="rgb-group">
+                                <div class="rgb-row">
+                                    <span>R</span>
+                                    <input type="range" min="0" max="255" value="184" id="rSlider" class="rgb-slider">
+                                    <span id="rValue">184</span>
+                                </div>
+                                <div class="rgb-row">
+                                    <span>G</span>
+                                    <input type="range" min="0" max="255" value="48" id="gSlider" class="rgb-slider">
+                                    <span id="gValue">48</span>
+                                </div>
+                                <div class="rgb-row">
+                                    <span>B</span>
+                                    <input type="range" min="0" max="255" value="61" id="bSlider" class="rgb-slider">
+                                    <span id="bValue">61</span>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedColor" value="#b8303d">
+                    </div>
+                    <div class="record-item" style="grid-column: span 2;">
+                        <label>备注</label>
+                        <input type="text" id="remark" placeholder="可选填写...">
+                    </div>
+                    <button class="record-submit" onclick="submitRecord()">保存记录</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">📊 历史记录</div>
+                <div id="historyList"></div>
+            </div>
+        </div>
+
+        <div id="analysis" class="content-section">
+            <div class="card">
+                <div class="analysis-header">
+                    <button class="analysis-back-btn" onclick="goBackFromAnalysis()">← 返回</button>
+                    <div class="analysis-title">历史分析</div>
+                </div>
+                <div class="analysis-top">
+                    <h4>症状记录</h4>
+                    <div class="analysis-filter">
+                        <input type="date" id="analysisStartDate" onchange="onAnalysisFilterChange()">
+                        <span style="font-size:12px; color:#9a8a8a;">至</span>
+                        <input type="date" id="analysisEndDate" onchange="onAnalysisFilterChange()">
+                    </div>
+                </div>
+                <div class="analysis-tabs">
+                    <button class="analysis-tab active" data-metric="flow" onclick="changeAnalysisMetric('flow', event)">经期流量</button>
+                    <button class="analysis-tab" data-metric="pain" onclick="changeAnalysisMetric('pain', event)">痛经情况</button>
+                    <button class="analysis-tab" data-metric="color" onclick="changeAnalysisMetric('color', event)">经血颜色</button>
+                </div>
+                <div class="chart-tools">
+                    <button class="export-btn" onclick="exportSymptomChart()">导出图表图片</button>
+                    <div class="chart-mode-toggle">
+                        <select id="chartMode" onchange="renderAnalysisPage()">
+                            <option value="bar">柱状图</option>
+                            <option value="line">折线图</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-canvas-wrap">
+                    <canvas id="symptomChart" width="900" height="280"></canvas>
+                </div>
+                <div class="chart-legend" id="analysisLegend"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">周期统计</div>
+                <div class="cycle-stats-grid">
+                    <div class="cycle-stats-item">
+                        <div class="cycle-stats-label">当前周期</div>
+                        <div class="cycle-stats-value" id="currentCycleDays">--</div>
+                    </div>
+                    <div class="cycle-stats-item">
+                        <div class="cycle-stats-label">平均周期</div>
+                        <div class="cycle-stats-value" id="avgCycleDisplay">--</div>
+                    </div>
+                    <div class="cycle-stats-item">
+                        <div class="cycle-stats-label">经期样本</div>
+                        <div class="cycle-stats-value" id="cycleSampleCount">0</div>
+                    </div>
+                </div>
+                <div class="cycle-intervals-list" id="cycleIntervalsList"></div>
+            </div>
+
+            <div class="card">
+                <div class="analysis-top">
+                    <h4>周期记录</h4>
+                </div>
+                <div class="stats-grid">
+                    <div class="stats-card">
+                        <div class="value" id="avgCycleDays">--</div>
+                        <div class="label">平均周期天数</div>
+                        <div class="desc">已排除异常周期样本</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="value" id="avgDurationDays">--</div>
+                        <div class="label">平均经期时长</div>
+                        <div class="desc">已排除异常经期时长样本</div>
+                    </div>
+                </div>
+                <table class="analysis-table">
+                    <thead>
+                        <tr>
+                            <th>经期时间</th>
+                            <th>经期时长</th>
+                            <th>周期天数</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cycleTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="reminder" class="content-section">
+            <div class="card">
+                <div class="card-title">🔔 提醒设置</div>
+                <div class="reminder-item">
+                    <div class="reminder-info">
+                        <h4>经前提醒</h4>
+                        <p>月经来临前N天提醒</p>
+                    </div>
+                    <select id="prePeriodDays" onchange="saveReminder('prePeriod', this.value)">
+                        <option value="1">1天</option>
+                        <option value="2">2天</option>
+                        <option value="3" selected>3天</option>
+                        <option value="4">4天</option>
+                        <option value="5">5天</option>
+                        <option value="6">6天</option>
+                        <option value="7">7天</option>
+                    </select>
+                </div>
+                <div class="reminder-item">
+                    <div class="reminder-info">
+                        <h4>卵泡期提醒</h4>
+                        <p>卵泡期：体力回升，状态转好</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="follicularReminder" onchange="saveReminder('follicular', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="reminder-item">
+                    <div class="reminder-info">
+                        <h4>排卵期提醒</h4>
+                        <p>排卵期：分泌物增多，免疫力略降</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="ovulationReminder" onchange="saveReminder('ovulation', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="reminder-item">
+                    <div class="reminder-info">
+                        <h4>黄体期提醒</h4>
+                        <p>黄体期：易疲劳、烦躁、水肿、长痘</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="lutealReminder" onchange="saveReminder('luteal', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="reminder-item">
+                    <div class="reminder-info">
+                        <h4>月经期提醒</h4>
+                        <p>月经期：易腹痛、畏寒、乏力</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="periodReminder" onchange="saveReminder('period', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="reminder-item">
+                    <div class="reminder-info">
+                        <h4>浏览器通知</h4>
+                        <p id="notificationStatus">开启后可在后台接收提醒</p>
+                    </div>
+                    <button class="cloud-btn" id="notificationBtn" onclick="toggleBrowserNotification()">开启通知</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="health" class="content-section">
+            <div class="card">
+                <div class="card-title">🌸 经期养护</div>
+                <div class="health-card">
+                    <h4>饮食宜忌</h4>
+                    <ul>
+                        <li>宜：温性食物、红枣、桂圆、红糖姜茶</li>
+                        <li>忌：生冷、辛辣、咖啡、浓茶</li>
+                    </ul>
+                </div>
+                <div class="health-card">
+                    <h4>暖宫食谱</h4>
+                    <ul>
+                        <li>红糖姜枣茶：温宫散寒</li>
+                        <li>当归鸡蛋汤：补血调经</li>
+                        <li>桂圆红枣粥：养血安神</li>
+                    </ul>
+                </div>
+                <div class="health-card">
+                    <h4>痛经改善</h4>
+                    <ul>
+                        <li>保暖：腹部热敷，改善局部血液循环</li>
+                        <li>泡脚：非经期可用温水泡脚15-20分钟；经期宜缩短时间（5-10分钟）、水温不宜过高，避免经血量增多</li>
+                        <li>运动：轻柔瑜伽、散步、伸展运动</li>
+                        <li>作息：保证充足睡眠，减少熬夜</li>
+                    </ul>
+                </div>
+                <div class="health-card">
+                    <h4>穴位调理</h4>
+                    <div class="acupoint-item">
+                        <div class="acupoint-name">三阴交</div>
+                        <div class="acupoint-position">位置：小腿内侧，内踝尖上3寸，胫骨内侧缘后际</div>
+                        <div class="acupoint-effect">功效：调经止痛、健脾益气、缓解经期不适</div>
+                    </div>
+                    <div class="acupoint-item">
+                        <div class="acupoint-name">关元穴</div>
+                        <div class="acupoint-position">位置：下腹部，脐中下3寸，前正中线上</div>
+                        <div class="acupoint-effect">功效：温经散寒、补肾固精、改善痛经与宫寒</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">🌿 中医疏肝理气</div>
+                <div class="health-card">
+                    <h4>疏肝方法</h4>
+                    <ul>
+                        <li>保持心情舒畅，避免郁怒</li>
+                        <li>适量运动，促进气血运行</li>
+                        <li>饮用玫瑰花茶、陈皮水</li>
+                        <li>按揉太冲穴、期门穴</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">🤰 备孕/孕期科普</div>
+                <div class="health-card">
+                    <h4>备孕小贴士</h4>
+                    <ul>
+                        <li>排卵期同房受孕率较高</li>
+                        <li>保持良好作息，避免熬夜</li>
+                        <li>补充叶酸，均衡饮食</li>
+                    </ul>
+                </div>
+                <div class="health-card">
+                    <h4>孕初期常见变化</h4>
+                    <ul>
+                        <li>可能出现恶心、乏力、嗜睡</li>
+                        <li>乳房胀痛、尿频</li>
+                        <li>情绪波动较大</li>
+                    </ul>
+                </div>
+                <div style="background:#fff0f0; padding:10px; border-radius:8px; margin-top:10px; font-size:12px; color:#c45a5a;">
+                    ⚠️ 备孕及孕期问题请咨询专业医生，本内容仅为科普参考
+                </div>
+            </div>
+        </div>
+
+        <div id="community" class="content-section" style="display:none;">
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <div class="card-title" style="margin-bottom:0;">💬 养生交流圈</div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <button class="cloud-btn" onclick="openCloudModal()">☁ 云同步设置</button>
+                        <button class="post-btn" onclick="openPostModal()">✏️ 发帖</button>
+                    </div>
+                </div>
+                <div class="cloud-status" id="cloudStatusText">当前：本地模式（仅当前浏览器可见）</div>
+                <div id="communityContent">
+                    <ul class="post-list" id="postList"></ul>
+                </div>
+                <div id="adminPanel"></div>
+            </div>
+        </div>
+
+        <div id="moderation" class="content-section" style="display:none;">
+            <div class="card">
+                <div class="card-title">🛡 社区评论审核后台</div>
+                <div class="moderation-toolbar">
+                    <div style="font-size:12px; color:#8e7d7d;">仅管理员可见，用于审核评论与回复</div>
+                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                        <input id="moderationSearch" type="text" placeholder="搜索用户/内容/帖子ID" oninput="renderModerationPanel()">
+                        <select id="moderationFilter" onchange="renderModerationPanel()">
+                            <option value="all">全部状态</option>
+                            <option value="pending">待审核</option>
+                            <option value="approved">已通过</option>
+                            <option value="rejected">已驳回</option>
+                        </select>
+                        <button class="mod-approve" onclick="bulkApprovePending()">批量通过待审核</button>
+                    </div>
+                </div>
+                <div id="moderationList"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="warning">
+                ⚠️ 本内容仅为日常科普与参考，不替代专业医疗服务，如有不适请及时就医。
+            </div>
+            <p>© 2026 养身小医</p>
+        </div>
+    </div>
+
+    <div class="modal" id="initModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🌸 基础信息设置</h3>
+                <button class="modal-close" onclick="closeInitModal()">×</button>
+            </div>
+            <div class="modal-step">
+                <h4>1. 请输入你的月经期持续天数</h4>
+                <select id="periodDuration" onchange="toggleCustomDuration()">
+                    <option value="3">3天</option>
+                    <option value="4">4天</option>
+                    <option value="5" selected>5天</option>
+                    <option value="6">6天</option>
+                    <option value="7">7天</option>
+                    <option value="other">其他（可填写）</option>
+                </select>
+                <input type="number" id="customDuration" min="1" max="15" placeholder="请输入天数（1-15）" style="display:none; margin-top:8px; width:100%; padding:10px; border:1.5px solid #ece4e4; border-radius:10px; font-size:13px;" oninput="syncCustomDuration()">
+            </div>
+            <div class="modal-step">
+                <h4>2. 请选择上次月经第一天日期</h4>
+                <div class="mini-calendar-nav">
+                    <button onclick="prevInitMonth()">◀</button>
+                    <span id="initCalendarTitle">2026年4月</span>
+                    <button onclick="nextInitMonth()">▶</button>
+                </div>
+                <div class="mini-calendar" id="initCalendar"></div>
+                <input type="hidden" id="selectedDate">
+            </div>
+            <button class="modal-submit" onclick="submitInit()">保存</button>
+        </div>
+    </div>
+
+    <div class="modal" id="postModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>发布新帖</h3>
+                <button class="modal-close" onclick="closePostModal()">×</button>
+            </div>
+            <textarea id="postContent" style="width:100%; min-height:100px; padding:12px; border:2px solid #f0e8e8; border-radius:10px; font-size:13px; resize:none;" placeholder="分享你的养生经验..."></textarea>
+            <div class="post-upload-wrap">
+                <label for="postImageInput" class="upload-btn">添加图片</label>
+                <input id="postImageInput" type="file" accept="image/*" multiple style="display:none;" onchange="handlePostImageUpload(event)">
+                <div class="upload-hint">最多上传3张，仅保存在当前浏览器（Base64）</div>
+                <div class="upload-preview-row" id="postImagePreview"></div>
+            </div>
+            <button class="modal-submit" style="margin-top:12px;" onclick="submitPost()">发布</button>
+        </div>
+    </div>
+
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>账号登录</h3>
+                <button class="modal-close" onclick="closeLoginModal()">×</button>
+            </div>
+            <div class="modal-step">
+                <h4>用户名</h4>
+                <input id="loginUsername" type="text" placeholder="请输入用户名">
+            </div>
+            <div class="modal-step">
+                <h4>密码</h4>
+                <input id="loginPassword" type="password" placeholder="请输入密码">
+            </div>
+            <button class="modal-submit" onclick="submitLogin()">登录</button>
+            <button class="modal-submit" style="margin-top:10px; background:#f7e8e8; color:#9a7373;" onclick="switchToRegisterModal()">注册账号</button>
+        </div>
+    </div>
+
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>注册账号</h3>
+                <button class="modal-close" onclick="closeRegisterModal()">×</button>
+            </div>
+            <div class="modal-step">
+                <h4>用户名</h4>
+                <input id="registerUsername" type="text" placeholder="请输入用户名">
+            </div>
+            <div class="modal-step">
+                <h4>昵称（可选）</h4>
+                <input id="registerNickname" type="text" placeholder="默认与用户名相同">
+            </div>
+            <div class="modal-step">
+                <h4>头像</h4>
+                <select id="registerAvatar">
+                    <option value="🌷">🌷 清新</option>
+                    <option value="🌸">🌸 温柔</option>
+                    <option value="🌺">🌺 活力</option>
+                    <option value="🪷">🪷 宁静</option>
+                    <option value="💮">💮 元气</option>
+                </select>
+            </div>
+            <div class="modal-step">
+                <h4>密码</h4>
+                <input id="registerPassword" type="password" placeholder="请输入密码">
+            </div>
+            <div class="modal-step">
+                <h4>确认密码</h4>
+                <input id="registerConfirmPassword" type="password" placeholder="请再次输入密码">
+                <p style="font-size:11px; color:#a88989; margin-top:8px;">密码至少8位，需包含字母和数字</p>
+            </div>
+            <button class="modal-submit" onclick="submitRegister()">注册并登录</button>
+        </div>
+    </div>
+
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>个人资料设置</h3>
+                <button class="modal-close" onclick="closeProfileModal()">×</button>
+            </div>
+            <div class="modal-step">
+                <h4>昵称</h4>
+                <input id="profileNickname" type="text" placeholder="请输入昵称">
+            </div>
+            <div class="modal-step">
+                <h4>头像</h4>
+                <select id="profileAvatar">
+                    <option value="🌷">🌷 清新</option>
+                    <option value="🌸">🌸 温柔</option>
+                    <option value="🌺">🌺 活力</option>
+                    <option value="🪷">🪷 宁静</option>
+                    <option value="💮">💮 元气</option>
+                </select>
+            </div>
+            <div class="modal-step">
+                <h4>智能提醒</h4>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;">
+                    <div>
+                        <div style="font-size:13px;color:#5a4a4a;">经前提醒</div>
+                        <div style="font-size:11px;color:#a89a9a;margin-top:2px;">开启后自动检测并弹窗提醒</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="profileSmartReminder" onchange="saveSmartReminderToggle(this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            <button class="modal-submit" onclick="saveProfile()">保存资料</button>
+        </div>
+    </div>
+
+    <div class="modal" id="reportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>举报帖子</h3>
+                <button class="modal-close" onclick="closeReportModal()">×</button>
+            </div>
+            <div class="modal-step">
+                <h4>举报理由</h4>
+                <select id="reportReason">
+                    <option value="垃圾广告">垃圾广告</option>
+                    <option value="骚扰辱骂">骚扰辱骂</option>
+                    <option value="不实信息">不实信息</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <div class="modal-step">
+                <h4>补充说明（可选）</h4>
+                <input id="reportNote" type="text" placeholder="可填写简短说明">
+            </div>
+            <button class="modal-submit" onclick="submitReport()">提交举报</button>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteConfirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>确认删除</h3>
+                <button class="modal-close" onclick="closeDeleteConfirmModal()">×</button>
+            </div>
+            <div class="modal-step" style="text-align:center;">
+                <div style="font-size:48px;margin-bottom:12px;">⚠️</div>
+                <p id="deleteConfirmMessage" style="font-size:14px;color:#5a4a4a;line-height:1.6;"></p>
+            </div>
+            <button class="modal-submit" style="background:#d9534f;" onclick="confirmDelete()">确认删除</button>
+            <button class="modal-submit" style="margin-top:8px;background:#f7e8e8;color:#9a7373;" onclick="closeDeleteConfirmModal()">取消</button>
+        </div>
+    </div>
+
+    <div class="modal" id="cloudModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>云同步设置（Supabase）</h3>
+                <button class="modal-close" onclick="closeCloudModal()">×</button>
+            </div>
+            <div class="modal-step">
+                <h4>Project URL</h4>
+                <input id="cloudUrl" type="text" placeholder="https://xxxx.supabase.co">
+            </div>
+            <div class="modal-step">
+                <h4>Anon Key</h4>
+                <input id="cloudAnonKey" type="text" placeholder="粘贴 anon public key">
+            </div>
+            <button class="modal-submit" onclick="saveCloudConfig()">保存并连接</button>
+            <button class="modal-submit" style="margin-top:8px; background:#f7e8e8; color:#9a7373;" onclick="disableCloudSync()">关闭云同步</button>
+        </div>
+    </div>
+
+    <div class="modal" id="imageViewerModal" onclick="closeImageViewer(event)">
+        <div class="modal-content image-viewer-content">
+            <img id="imageViewerImg" src="" alt="post image">
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="smart-reminder-modal" id="smartReminderModal">
+        <div class="smart-reminder-content">
+            <div class="smart-reminder-icon" id="smartReminderIcon">🌸</div>
+            <div class="smart-reminder-title" id="smartReminderTitle">温馨提醒</div>
+            <div class="smart-reminder-desc" id="smartReminderDesc"></div>
+            <div class="smart-reminder-tips" id="smartReminderTips">
+                <h5>💡 日常小建议</h5>
+                <ul id="smartReminderTipList"></ul>
+            </div>
+            <div class="smart-reminder-actions">
+                <button class="smart-reminder-btn primary" onclick="closeSmartReminder()">我知道了</button>
+            </div>
+            <div class="notification-permission-hint" id="notificationPermissionHint"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        let currentDate = new Date();
+        let periodData = JSON.parse(localStorage.getItem('periodData') || '{}');
+        let periodDates = JSON.parse(localStorage.getItem('periodDates') || '[]');
+        let records = JSON.parse(localStorage.getItem('records') || '[]');
+        let reminders = JSON.parse(localStorage.getItem('reminders') || '{}');
+        let posts = JSON.parse(localStorage.getItem('posts') || '[]');
+        let users = JSON.parse(localStorage.getItem('users') || '[]');
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        let initCalendarDate = new Date();
+        const INIT_MODAL_SHOWN_KEY = 'initModalLastShownDate';
+        let analysisMetric = 'flow';
+        let selectedCycleId = '';
+        let activePostId = null;
+        let selectedCalendarDate = formatDate(new Date());
+        let pendingReportPostId = null;
+        let pendingDeleteType = null;
+        let pendingDeleteId = null;
+        let pendingDeleteParentId = null;
+        let draftPostImages = [];
+        let cloudConfig = JSON.parse(localStorage.getItem('cloudSyncConfig') || '{}');
+        let supabaseClient = null;
+        let isCloudEnabled = false;
+        const COMMENT_STATUS = {
+            pending: 'pending',
+            approved: 'approved',
+            rejected: 'rejected'
+        };
+
+        if (posts.length === 0) {
+            posts = [
+                {
+                    id: 1,
+                    author: '小红',
+                    avatar: '🌸',
+                    content: '经期喝红糖姜茶真的很管用！推荐给大家～',
+                    time: formatDateTime(new Date(Date.now() - 2 * 60 * 60 * 1000)),
+                    likes: 12,
+                    comments: []
+                },
+                {
+                    id: 2,
+                    author: '小美',
+                    avatar: '🌺',
+                    content: '最近开始练八段锦，感觉身体暖暖的，经期也不那么难受了',
+                    time: formatDateTime(new Date(Date.now() - 5 * 60 * 60 * 1000)),
+                    likes: 8,
+                    comments: []
+                }
+            ];
+            localStorage.setItem('posts', JSON.stringify(posts));
+        }
+
+        posts = posts.map(p => ({
+            ...p,
+            comments: normalizeCommentTree(Array.isArray(p.comments) ? p.comments : []),
+            authorUsername: p.authorUsername || '',
+            reports: Array.isArray(p.reports) ? p.reports : [],
+            images: Array.isArray(p.images) ? p.images.slice(0, 3) : []
+        }));
+        localStorage.setItem('posts', JSON.stringify(posts));
+
+        users = users.map(u => ({
+            ...u,
+            nickname: u.nickname || u.username,
+            avatar: u.avatar || '🌷'
+        }));
+        localStorage.setItem('users', JSON.stringify(users));
+
+        window.onload = async function() {
+            initCloudClient();
+            if (isCloudEnabled) {
+                await loadPostsFromCloud();
+            }
+            if (shouldAutoOpenInitModalToday()) {
+                openInitModal();
+                localStorage.setItem(INIT_MODAL_SHOWN_KEY, formatDate(new Date()));
+            }
+            renderCalendar();
+            renderPosts();
+            renderHistory();
+            loadReminders();
+            initColorPicker();
+            initAnalysisFilters();
+            renderAnalysisPage();
+            updateUserUI();
+            applyPermissions();
+            updateCloudStatus();
+            renderModerationPanel();
+            updateNotificationUI();
+            checkAndShowSmartReminders();
+        };
+
+        function shouldAutoOpenInitModalToday() {
+            const today = formatDate(new Date());
+            const lastShownDate = localStorage.getItem(INIT_MODAL_SHOWN_KEY);
+            return lastShownDate !== today;
+        }
+
+        function switchTab(tabName, evt) {
+            if (!currentUser && !['calendar', 'community'].includes(tabName)) {
+                showToast('请先登录后使用该功能');
+                openLoginModal();
+                return;
+            }
+            if (tabName === 'moderation' && !isAdminUser()) {
+                showToast('仅管理员可进入审核后台');
+                return;
+            }
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            if (evt && evt.target) {
+                evt.target.classList.add('active');
+            } else {
+                const tabButton = document.querySelector(`.nav-tab[onclick*="switchTab('${tabName}'"]`);
+                if (tabButton) tabButton.classList.add('active');
+            }
+            if (tabName === 'analysis') {
+                renderAnalysisPage();
+            } else if (tabName === 'moderation') {
+                renderModerationPanel();
+            }
+        }
+
+        function goBackFromAnalysis() {
+            switchTab('calendar');
+        }
+
+        function openInitModal() {
+            document.getElementById('initModal').classList.add('active');
+            renderInitCalendar();
+            if (periodData.duration) {
+                document.getElementById('periodDuration').value = periodData.duration;
+            }
+        }
+
+        function toggleCustomDuration() {
+            const select = document.getElementById('periodDuration');
+            const customInput = document.getElementById('customDuration');
+            if (select.value === 'other') {
+                customInput.style.display = 'block';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+            }
+        }
+
+        function syncCustomDuration() {
+            const customInput = document.getElementById('customDuration');
+            let val = parseInt(customInput.value);
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > 15) val = 15;
+            customInput.value = val;
+        }
+
+        function closeInitModal() {
+            document.getElementById('initModal').classList.remove('active');
+        }
+
+        function renderInitCalendar() {
+            const year = initCalendarDate.getFullYear();
+            const month = initCalendarDate.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            document.getElementById('initCalendarTitle').textContent = `${year}年${month + 1}月`;
+            
+            const grid = document.getElementById('initCalendar');
+            grid.innerHTML = '';
+            
+            ['日','一','二','三','四','五','六'].forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-day-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+            
+            for (let i = 0; i < firstDay; i++) {
+                grid.appendChild(document.createElement('div'));
+            }
+            
+            const today = new Date();
+            for (let i = 1; i <= daysInMonth; i++) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day';
+                day.textContent = i;
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                
+                if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === i) {
+                    day.classList.add('today');
+                }
+                
+                day.onclick = () => {
+                    document.querySelectorAll('#initCalendar .calendar-day').forEach(d => d.classList.remove('selected'));
+                    day.classList.add('selected');
+                    document.getElementById('selectedDate').value = dateStr;
+                };
+                grid.appendChild(day);
+            }
+        }
+
+        function prevInitMonth() {
+            initCalendarDate.setMonth(initCalendarDate.getMonth() - 1);
+            renderInitCalendar();
+        }
+
+        function nextInitMonth() {
+            initCalendarDate.setMonth(initCalendarDate.getMonth() + 1);
+            renderInitCalendar();
+        }
+
+        function submitInit() {
+            let duration = parseInt(document.getElementById('periodDuration').value);
+            if (document.getElementById('periodDuration').value === 'other') {
+                duration = parseInt(document.getElementById('customDuration').value) || 5;
+            }
+            const selectedDate = document.getElementById('selectedDate').value;
+            
+            if (!selectedDate) {
+                showToast('请选择上次月经第一天');
+                return;
+            }
+            
+            periodData = { duration: duration, lastPeriod: selectedDate, cycle: 28 };
+            
+            const startDate = new Date(selectedDate);
+            for (let i = 0; i < duration; i++) {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+                const dateStr = formatDate(date);
+                if (!periodDates.includes(dateStr)) {
+                    periodDates.push(dateStr);
+                }
+            }
+            
+            localStorage.setItem('periodData', JSON.stringify(periodData));
+            localStorage.setItem('periodDates', JSON.stringify(periodDates));
+            
+            closeInitModal();
+            renderCalendar();
+            initAnalysisFilters();
+            renderAnalysisPage();
+            showToast('保存成功！');
+        }
+
+        function updatePeriodReferenceDate() {
+            const groups = getRecordedPeriodGroups();
+            if (groups.length === 0) {
+                delete periodData.lastPeriod;
+                localStorage.setItem('periodData', JSON.stringify(periodData));
+                return;
+            }
+            const starts = groups.map(group => group[0]);
+            const todayStr = formatDate(new Date());
+            const latestPastStart = starts.filter(date => date <= todayStr).pop();
+            periodData.lastPeriod = latestPastStart || starts[starts.length - 1];
+            const cycleModel = getCycleModel();
+            periodData.cycle = cycleModel.cycleDays;
+            periodData.duration = cycleModel.durationDays;
+            localStorage.setItem('periodData', JSON.stringify(periodData));
+        }
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            document.getElementById('calendarTitle').textContent = `${year}年${month + 1}月`;
+
+            const firstDayOfWeek = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            ['日','一','二','三','四','五','六'].forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-day-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+
+            const today = new Date();
+            const firstDay = new Date(year, month, 1);
+            const lastDayOfMonth = new Date(year, month + 1, 0);
+            const nextMonth3Day = new Date(year, month + 1, 4);
+
+            for (let i = 0; i < 42; i++) {
+                const cellDate = new Date(year, month, 1);
+                cellDate.setDate(1 + i);
+                const day = document.createElement('div');
+                day.className = 'calendar-day';
+
+                if (cellDate < firstDay || cellDate > nextMonth3Day) {
+                    day.style.visibility = 'hidden';
+                    grid.appendChild(day);
+                    continue;
+                }
+
+                const dateStr = formatDate(cellDate);
+                const holidayName = getHolidayName(dateStr);
+                let dayContent = cellDate.getDate();
+                if (holidayName) {
+                    dayContent += '<span class="holiday-tag">' + holidayName + '</span>';
+                }
+                day.innerHTML = dayContent;
+
+                const todayStr = formatDate(today);
+                const isPastDate = dateStr < todayStr;
+                const phaseResult = getPhaseForDate(dateStr);
+                if (phaseResult) {
+                    if (phaseResult.isPredicted && !isPastDate) {
+                        day.classList.add('predicted');
+                    } else if (!phaseResult.isPredicted) {
+                        day.classList.add(phaseResult.phase);
+                    }
+                }
+
+                if (cellDate > lastDayOfMonth) {
+                    day.classList.add('other-month');
+                }
+
+                if (
+                    today.getFullYear() === cellDate.getFullYear() &&
+                    today.getMonth() === cellDate.getMonth() &&
+                    today.getDate() === cellDate.getDate()
+                ) {
+                    day.classList.add('today');
+                }
+
+                if (selectedCalendarDate === dateStr) {
+                    day.classList.add('selected');
+                }
+
+                day.onclick = () => {
+                    selectedCalendarDate = dateStr;
+                    renderCalendar();
+                };
+                day.ondblclick = () => {
+                    selectedCalendarDate = dateStr;
+                    if (!ensureLogin('请先登录后修改月经期')) return;
+                    togglePeriod(dateStr);
+                };
+                grid.appendChild(day);
+            }
+            renderTodayStatus(selectedCalendarDate);
+        }
+
+        function getPhaseForDate(dateStr) {
+            const normalizedPeriodDates = new Set(periodDates);
+            if (normalizedPeriodDates.has(dateStr)) {
+                return { phase: 'period', isPredicted: false };
+            }
+
+            const cycleModel = getCycleModel();
+            if (!cycleModel.nextPeriodDate) return null;
+
+            const lastPeriod = parseDateString(cycleModel.anchorStart);
+            const currentDateOnly = parseDateString(dateStr);
+            const duration = cycleModel.durationDays;
+            const cycle = cycleModel.cycleDays;
+            const diffDays = Math.floor((currentDateOnly - lastPeriod) / 86400000);
+            const dayInCycle = ((diffDays % cycle) + cycle) % cycle;
+
+            if (dayInCycle < duration) return { phase: 'period', isPredicted: true };
+            if (dayInCycle < cycle - 14) return { phase: 'follicular', isPredicted: false };
+            if (dayInCycle < cycle - 10) return { phase: 'ovulation', isPredicted: false };
+            return { phase: 'luteal', isPredicted: false };
+        }
+
+        function renderTodayStatus(dateStr) {
+            const statusText = document.getElementById('todayStatusText');
+            if (!statusText) return;
+            const result = getPhaseForDate(dateStr);
+            if (!result) {
+                statusText.textContent = `${dateStr}：暂无足够数据，请先设置基础周期信息。`;
+                return;
+            }
+            const { phase, isPredicted } = result;
+            const phaseMap = {
+                period: isPredicted ? '预测经期' : '月经期',
+                follicular: '卵泡期',
+                ovulation: '排卵期',
+                luteal: '黄体期'
+            };
+            const adviceMap = {
+                period: isPredicted ? '（仅供参考）' : '建议注意保暖和休息，饮食以温和为主。',
+                follicular: '身体逐渐恢复，适合轻中度运动和规律作息。',
+                ovulation: '可能出现分泌物增多，建议关注卫生与补水。',
+                luteal: '情绪波动和疲劳感可能增加，建议减少熬夜与高盐饮食。'
+            };
+            statusText.textContent = `${dateStr} ${phaseMap[phase]}：${adviceMap[phase]}`;
+        }
+
+        function getLatestPeriodStart() {
+            const starts = getRecordedPeriodGroups().map(group => group[0]);
+            if (starts.length === 0) return '';
+            return starts[starts.length - 1] || '';
+        }
+
+        function getRecordedPeriodGroups() {
+            const unique = [...new Set(periodDates)].sort();
+            if (unique.length === 0) return [];
+            const groups = [];
+            let current = [unique[0]];
+            for (let i = 1; i < unique.length; i++) {
+                const prev = parseDateString(unique[i - 1]);
+                prev.setDate(prev.getDate() + 1);
+                if (formatDate(prev) === unique[i]) {
+                    current.push(unique[i]);
+                } else {
+                    groups.push(current);
+                    current = [unique[i]];
+                }
+            }
+            groups.push(current);
+            return groups;
+        }
+
+        function getPeriodStartDates() {
+            const groups = getRecordedPeriodGroups();
+            return groups.map(g => g[0]).sort();
+        }
+
+        function calculateWeightedAverageCycle(intervals) {
+            if (!intervals || intervals.length === 0) return 28;
+            if (intervals.length === 1) return intervals[0];
+            const validIntervals = intervals.filter(d => d >= 15 && d <= 60);
+            if (validIntervals.length === 0) return 28;
+            if (validIntervals.length === 1) return validIntervals[0];
+            const mean = validIntervals.reduce((a, b) => a + b, 0) / validIntervals.length;
+            const stdDev = Math.sqrt(validIntervals.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / validIntervals.length);
+            const filtered = validIntervals.filter(val => Math.abs(val - mean) <= 2 * stdDev);
+            if (filtered.length === 0) return Math.round(mean);
+            const weights = filtered.map((_, i) => i + 1);
+            const weightSum = weights.reduce((a, b) => a + b, 0);
+            const weightedSum = filtered.reduce((sum, val, i) => sum + val * weights[i], 0);
+            return Math.round(weightedSum / weightSum);
+        }
+
+        function averageFrom(values, fallback) {
+            if (!values.length) return fallback;
+            const avg = values.reduce((a, b) => a + b, 0) / values.length;
+            return Math.round(avg);
+        }
+
+        function getCycleModel() {
+            const periodStarts = getPeriodStartDates();
+            const fallbackDuration = Math.max(1, parseInt(periodData.duration, 10) || 5);
+            const fallbackCycle = 28;
+            if (periodStarts.length < 1) {
+                return {
+                    durationDays: fallbackDuration,
+                    cycleDays: fallbackCycle,
+                    anchorStart: '',
+                    nextPeriodDate: null,
+                    ovulationDate: null
+                };
+            }
+            const durations = getRecordedPeriodGroups().map(g => g.length).filter(d => d >= 2 && d <= 12);
+            const durationDays = durations.length > 0 ? Math.max(1, averageFrom(durations, fallbackDuration)) : fallbackDuration;
+            let cycleDays = fallbackCycle;
+            let intervalCount = 0;
+            if (periodStarts.length >= 2) {
+                const intervals = [];
+                for (let i = 1; i < periodStarts.length; i++) {
+                    const days = Math.floor((parseDateString(periodStarts[i]) - parseDateString(periodStarts[i - 1])) / 86400000);
+                    intervals.push(days);
+                }
+                intervalCount = intervals.length;
+                cycleDays = calculateWeightedAverageCycle(intervals);
+            }
+            const lastStart = periodStarts[periodStarts.length - 1];
+            const nextPeriodDate = new Date(parseDateString(lastStart));
+            nextPeriodDate.setDate(nextPeriodDate.getDate() + cycleDays);
+            const ovulationDate = new Date(nextPeriodDate);
+            ovulationDate.setDate(ovulationDate.getDate() - 14);
+            return {
+                durationDays,
+                cycleDays,
+                anchorStart: lastStart,
+                nextPeriodDate: formatDate(nextPeriodDate),
+                ovulationDate: formatDate(ovulationDate),
+                intervalCount
+            };
+        }
+
+        function parseDateString(dateStr) {
+            const [year, month, day] = dateStr.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
+
+        function formatDate(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        const holidayData = {
+            '2026-01-01': '元旦',
+            '2026-01-28': '春节', '2026-01-29': '春节', '2026-01-30': '春节', '2026-01-31': '春节',
+            '2026-02-01': '春节', '2026-02-02': '春节', '2026-02-03': '春节',
+            '2026-04-03': '清明', '2026-04-04': '清明', '2026-04-05': '清明',
+            '2026-04-06': '清明',
+            '2026-05-01': '劳动节', '2026-05-02': '劳动节', '2026-05-03': '劳动节',
+            '2026-05-04': '劳动节', '2026-05-05': '劳动节',
+            '2026-06-20': '端午', '2026-06-21': '端午', '2026-06-22': '端午',
+            '2026-09-24': '中秋', '2026-09-25': '中秋', '2026-09-26': '中秋',
+            '2026-10-01': '国庆', '2026-10-02': '国庆', '2026-10-03': '国庆',
+            '2026-10-04': '国庆', '2026-10-05': '国庆', '2026-10-06': '国庆', '2026-10-07': '国庆',
+            '2026-10-08': '国庆', '2026-10-09': '国庆', '2026-10-10': '国庆', '2026-10-11': '国庆'
+        };
+
+        function getHolidayName(dateStr) {
+            return holidayData[dateStr] || null;
+        }
+
+        function togglePeriod(dateStr) {
+            const cycleModel = getCycleModel();
+            const duration = cycleModel.durationDays || 5;
+            const clickDate = new Date(dateStr);
+            
+            if (periodDates.includes(dateStr)) {
+                const group = getRecordedPeriodGroups().find(g => g.includes(dateStr));
+                if (group) {
+                    const groupSet = new Set(group);
+                    periodDates = periodDates.filter(pd => !groupSet.has(pd));
+                }
+                showToast('已取消标记');
+            } else {
+                for (let i = 0; i < duration; i++) {
+                    const date = new Date(clickDate);
+                    date.setDate(date.getDate() + i);
+                    const d = formatDate(date);
+                    if (!periodDates.includes(d)) {
+                        periodDates.push(d);
+                    }
+                }
+                showToast('已标记月经期');
+            }
+            updatePeriodReferenceDate();
+            localStorage.setItem('periodDates', JSON.stringify(periodDates));
+            renderCalendar();
+            initAnalysisFilters();
+            renderAnalysisPage();
+        }
+
+        function prevMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function initColorPicker() {
+            const presetContainer = document.getElementById('presetColors');
+            const presetButtons = Array.from(presetContainer.querySelectorAll('.preset-color-btn'));
+            const preview = document.getElementById('colorPreview');
+            const nativePicker = document.getElementById('nativeColorPicker');
+            const rSlider = document.getElementById('rSlider');
+            const gSlider = document.getElementById('gSlider');
+            const bSlider = document.getElementById('bSlider');
+            const rValue = document.getElementById('rValue');
+            const gValue = document.getElementById('gValue');
+            const bValue = document.getElementById('bValue');
+            const selectedColorInput = document.getElementById('selectedColor');
+
+            function clamp(value) {
+                return Math.max(0, Math.min(255, value));
+            }
+
+            function rgbToHex(r, g, b) {
+                return `#${[r, g, b].map(v => clamp(v).toString(16).padStart(2, '0')).join('')}`;
+            }
+
+            function parseAnyColorToRgb(color) {
+                if (!color) return { r: 184, g: 48, b: 61 };
+                const temp = document.createElement('div');
+                temp.style.color = color;
+                document.body.appendChild(temp);
+                const computed = getComputedStyle(temp).color;
+                document.body.removeChild(temp);
+                const match = computed.match(/\d+/g);
+                if (!match || match.length < 3) return { r: 184, g: 48, b: 61 };
+                return { r: parseInt(match[0], 10), g: parseInt(match[1], 10), b: parseInt(match[2], 10) };
+            }
+
+            function setActivePreset(hex) {
+                presetButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.color.toLowerCase() === hex.toLowerCase()));
+            }
+
+            function applyColor(rgb) {
+                const r = clamp(parseInt(rgb.r, 10));
+                const g = clamp(parseInt(rgb.g, 10));
+                const b = clamp(parseInt(rgb.b, 10));
+                const hex = rgbToHex(r, g, b);
+                preview.style.background = hex;
+                selectedColorInput.value = hex;
+                nativePicker.value = hex;
+                rSlider.value = r;
+                gSlider.value = g;
+                bSlider.value = b;
+                rValue.textContent = r;
+                gValue.textContent = g;
+                bValue.textContent = b;
+                setActivePreset(hex);
+            }
+
+            presetButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const rgb = parseAnyColorToRgb(btn.dataset.color);
+                    applyColor(rgb);
+                });
+            });
+
+            nativePicker.addEventListener('input', (e) => {
+                applyColor(parseAnyColorToRgb(e.target.value));
+            });
+
+            const updateFromRgbSliders = () => {
+                applyColor({
+                    r: rSlider.value,
+                    g: gSlider.value,
+                    b: bSlider.value
+                });
+            };
+            rSlider.addEventListener('input', updateFromRgbSliders);
+            gSlider.addEventListener('input', updateFromRgbSliders);
+            bSlider.addEventListener('input', updateFromRgbSliders);
+
+            applyColor(parseAnyColorToRgb(selectedColorInput.value));
+        }
+
+        function submitRecord() {
+            if (!ensureLogin('请先登录后再记录身体状态')) return;
+            const recordDate = document.getElementById('recordDate').value;
+            if (!recordDate) {
+                showToast('请选择记录日期');
+                return;
+            }
+            let mood = document.getElementById('moodStatus').value;
+            if (mood === '其他') {
+                const customMood = document.getElementById('customMood').value.trim();
+                if (!customMood) {
+                    showToast('请填写自定义情绪描述');
+                    return;
+                }
+                mood = customMood;
+            }
+            const record = {
+                date: recordDate,
+                body: document.getElementById('bodyStatus').value,
+                mood: mood,
+                flow: document.getElementById('flowLevel').value,
+                pain: document.getElementById('painLevel').value,
+                color: document.getElementById('selectedColor').value,
+                remark: document.getElementById('remark').value
+            };
+
+            if (!record.body || !record.mood) {
+                showToast('请填写身体和情绪状态');
+                return;
+            }
+
+            const existingIndex = records.findIndex(r => r.date === record.date);
+            if (existingIndex !== -1) {
+                records[existingIndex] = record;
+                showToast('该日期记录已更新！');
+            } else {
+                records.unshift(record);
+                showToast('记录保存成功！');
+            }
+            localStorage.setItem('records', JSON.stringify(records));
+            renderHistory();
+            renderAnalysisPage();
+
+            document.getElementById('recordDate').value = '';
+            document.getElementById('bodyStatus').value = '';
+            document.getElementById('moodStatus').value = '';
+            document.getElementById('customMood').value = '';
+            document.getElementById('customMood').style.display = 'none';
+            document.getElementById('flowLevel').value = '';
+            document.getElementById('painLevel').value = '';
+            document.getElementById('remark').value = '';
+        }
+
+        function toggleCustomMood(value) {
+            const customInput = document.getElementById('customMood');
+            if (value === '其他') {
+                customInput.style.display = 'block';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+                customInput.value = '';
+            }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            if (records.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:#a89a9a; font-size:13px; padding:20px;">暂无记录</p>';
+                return;
+            }
+            
+            list.innerHTML = records.slice(0, 10).map(r => `
+                <div style="padding:10px; border-bottom:1px solid #f0e8e8; font-size:13px;">
+                    <div style="color:#d48a8a; margin-bottom:5px;">${r.date}</div>
+                    <div>身体：${r.body} | 情绪：${r.mood} | 流量：${r.flow || '未记录'} | 痛经：${r.pain}</div>
+                    ${r.color ? `<div style="margin-top:5px;">经血颜色：<span style="display:inline-block; width:16px; height:16px; border-radius:50%; background:${r.color}; vertical-align:middle;"></span></div>` : ''}
+                    ${r.remark ? `<div style="color:#8a7a7a; margin-top:5px;">备注：${r.remark}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function initAnalysisFilters() {
+            const starts = getCycleEntries().map(c => c.start);
+            const startInput = document.getElementById('analysisStartDate');
+            const endInput = document.getElementById('analysisEndDate');
+            if (!startInput || !endInput || starts.length === 0) return;
+            const sorted = [...starts].sort();
+            if (!startInput.value) startInput.value = sorted[0];
+            if (!endInput.value) endInput.value = sorted[sorted.length - 1];
+        }
+
+        function onAnalysisFilterChange() {
+            selectedCycleId = '';
+            renderAnalysisPage();
+        }
+
+        function changeAnalysisMetric(metric, evt) {
+            analysisMetric = metric;
+            document.querySelectorAll('.analysis-tab').forEach(tab => tab.classList.remove('active'));
+            if (evt && evt.target) evt.target.classList.add('active');
+            renderAnalysisPage();
+        }
+
+        function getCycleEntries() {
+            const groups = getRecordedPeriodGroups();
+            if (groups.length === 0) return [];
+
+            return groups.map((g, idx) => {
+                const next = groups[idx + 1];
+                const cycleDays = next ? Math.floor((parseDateString(next[0]) - parseDateString(g[0])) / 86400000) : null;
+                return {
+                    id: g[0],
+                    start: g[0],
+                    end: g[g.length - 1],
+                    duration: g.length,
+                    cycleDays
+                };
+            });
+        }
+
+        function isAbnormalCycle(cycle) {
+            const durationAbnormal = cycle.duration < 3 || cycle.duration > 8;
+            const cycleAbnormal = cycle.cycleDays !== null && (cycle.cycleDays < 21 || cycle.cycleDays > 35);
+            return durationAbnormal || cycleAbnormal;
+        }
+
+        function getFilteredCycles() {
+            const startInput = document.getElementById('analysisStartDate');
+            const endInput = document.getElementById('analysisEndDate');
+            const start = startInput && startInput.value ? startInput.value : '';
+            const end = endInput && endInput.value ? endInput.value : '';
+            return getCycleEntries().filter(cycle => {
+                if (start && cycle.start < start) return false;
+                if (end && cycle.start > end) return false;
+                return true;
+            });
+        }
+
+        function getMetricValue(record, metric) {
+            if (!record) return 0;
+            if (metric === 'flow') {
+                const map = { '极少': 1, '偏少': 2, '正常': 3, '偏多': 4, '很多': 5 };
+                return map[record.flow] || 0;
+            }
+            if (metric === 'pain') {
+                const map = { '无痛经': 1, '轻微': 2, '中等': 3, '严重': 5 };
+                return map[record.pain] || 0;
+            }
+            if (metric === 'color') {
+                if (!record.color) return 0;
+                const rgb = cssColorToRgb(record.color);
+                if (!rgb) return 0;
+                const intensity = (rgb.r * 0.3 + rgb.g * 0.59 + rgb.b * 0.11);
+                const level = 5 - Math.round((intensity / 255) * 4);
+                return Math.max(1, Math.min(5, level));
+            }
+            return 0;
+        }
+
+        function cssColorToRgb(color) {
+            const hexMatch = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+            if (hexMatch) {
+                return {
+                    r: parseInt(hexMatch[1], 16),
+                    g: parseInt(hexMatch[2], 16),
+                    b: parseInt(hexMatch[3], 16)
+                };
+            }
+            const temp = document.createElement('div');
+            temp.style.color = color;
+            document.body.appendChild(temp);
+            const computed = getComputedStyle(temp).color;
+            document.body.removeChild(temp);
+            const parts = computed.match(/\d+/g);
+            if (!parts || parts.length < 3) return null;
+            return { r: parseInt(parts[0], 10), g: parseInt(parts[1], 10), b: parseInt(parts[2], 10) };
+        }
+
+        function hexToRgb(color) {
+            const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+            if (!match) return null;
+            return {
+                r: parseInt(match[1], 16),
+                g: parseInt(match[2], 16),
+                b: parseInt(match[3], 16)
+            };
+        }
+
+        function buildChartSeries(cycles) {
+            const recordMap = new Map(records.map(r => [r.date, r]));
+            return cycles.map(cycle => {
+                const values = [];
+                for (let i = 0; i < 5; i++) {
+                    const day = parseDateString(cycle.start);
+                    day.setDate(day.getDate() + i);
+                    values.push(getMetricValue(recordMap.get(formatDate(day)), analysisMetric));
+                }
+                return { cycle, values };
+            });
+        }
+
+        function renderAnalysisPage() {
+            const cycles = getFilteredCycles();
+            renderCycleStats();
+            renderAnalysisStats(cycles);
+            renderCycleTable(cycles);
+            renderSymptomChart(cycles);
+        }
+
+        function renderCycleStats() {
+            const groups = getRecordedPeriodGroups();
+            const starts = groups.map(g => g[0]).sort();
+            const intervals = [];
+            for (let i = 1; i < starts.length; i++) {
+                const days = Math.floor((parseDateString(starts[i]) - parseDateString(starts[i - 1])) / 86400000);
+                intervals.push(days);
+            }
+            const validIntervals = intervals.filter(d => d >= 21 && d <= 35);
+            const avgCycle = validIntervals.length > 0 ? (validIntervals.reduce((a, b) => a + b, 0) / validIntervals.length).toFixed(1) : '--';
+            let currentCycle = '--';
+            if (intervals.length > 0) {
+                currentCycle = intervals[intervals.length - 1];
+            }
+            document.getElementById('currentCycleDays').textContent = currentCycle;
+            document.getElementById('avgCycleDisplay').textContent = avgCycle === '--' ? '--' : `${avgCycle}天`;
+            document.getElementById('cycleSampleCount').textContent = starts.length;
+            const list = document.getElementById('cycleIntervalsList');
+            if (intervals.length === 0) {
+                list.innerHTML = '<span style="font-size:12px;color:#a89a9a;">暂无周期间隔数据，请至少记录2次月经首日</span>';
+            } else {
+                list.innerHTML = intervals.map((days, idx) => {
+                    const abnormal = days < 21 || days > 35;
+                    return `<div class="interval-tag ${abnormal ? 'abnormal' : ''}">${starts[idx]} → ${starts[idx + 1]}：<span>${days}天</span></div>`;
+                }).join('');
+            }
+        }
+
+        function renderAnalysisStats(cycles) {
+            const valid = cycles.filter(c => !isAbnormalCycle(c));
+            const cycleSamples = valid.filter(c => c.cycleDays !== null).map(c => c.cycleDays);
+            const durationSamples = valid.map(c => c.duration);
+            const avgCycle = cycleSamples.length ? (cycleSamples.reduce((a, b) => a + b, 0) / cycleSamples.length).toFixed(1) : '--';
+            const avgDuration = durationSamples.length ? (durationSamples.reduce((a, b) => a + b, 0) / durationSamples.length).toFixed(1) : '--';
+            document.getElementById('avgCycleDays').textContent = avgCycle === '--' ? '--' : `${avgCycle}天`;
+            document.getElementById('avgDurationDays').textContent = avgDuration === '--' ? '--' : `${avgDuration}天`;
+        }
+
+        function renderCycleTable(cycles) {
+            const tbody = document.getElementById('cycleTableBody');
+            if (!tbody) return;
+            if (cycles.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="empty-tip">暂无可分析周期数据</td></tr>';
+                return;
+            }
+            let lastYear = '';
+            const rows = [];
+            cycles.forEach(cycle => {
+                const year = cycle.start.slice(0, 4);
+                if (year !== lastYear) {
+                    rows.push(`<tr class="analysis-year-row"><td colspan="3">${year}年</td></tr>`);
+                    lastYear = year;
+                }
+                const abnormalDuration = cycle.duration < 3 || cycle.duration > 8;
+                const abnormalCycle = cycle.cycleDays !== null && (cycle.cycleDays < 21 || cycle.cycleDays > 35);
+                const abnormalReasons = [];
+                if (cycle.duration < 3) abnormalReasons.push('经期偏短（<3天）');
+                if (cycle.duration > 8) abnormalReasons.push('经期偏长（>8天）');
+                if (cycle.cycleDays !== null && cycle.cycleDays < 21) abnormalReasons.push('周期偏短（<21天）');
+                if (cycle.cycleDays !== null && cycle.cycleDays > 35) abnormalReasons.push('周期偏长（>35天）');
+                const reasonText = abnormalReasons.join('；');
+                const reasonTag = reasonText ? `<span class="abnormal-tag" title="${reasonText}">异常</span>` : '';
+                rows.push(`
+                    <tr class="${selectedCycleId === cycle.id ? 'selected' : ''}" onclick="selectCycle('${cycle.id}')">
+                        <td>${cycle.start} ~ ${cycle.end}</td>
+                        <td class="${abnormalDuration ? 'abnormal' : ''}" ${reasonText ? `title="${reasonText}"` : ''}>${cycle.duration}天${abnormalDuration ? reasonTag : ''}</td>
+                        <td class="${abnormalCycle ? 'abnormal' : ''}" ${reasonText ? `title="${reasonText}"` : ''}>${cycle.cycleDays === null ? '-' : `${cycle.cycleDays}天`}${abnormalCycle ? reasonTag : ''}</td>
+                    </tr>
+                `);
+            });
+            tbody.innerHTML = rows.join('');
+        }
+
+        function selectCycle(cycleId) {
+            selectedCycleId = cycleId;
+            renderAnalysisPage();
+        }
+
+        function renderSymptomChart(cycles) {
+            const canvas = document.getElementById('symptomChart');
+            const legend = document.getElementById('analysisLegend');
+            if (!canvas || !legend) return;
+            const ctx = canvas.getContext('2d');
+            const mode = document.getElementById('chartMode').value;
+            const series = buildChartSeries(cycles);
+            const palette = ['#e68a8a', '#d3a6d9', '#84b6e0', '#86c5a3', '#f0b88b', '#b89de8', '#dd8fb7'];
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = { top: 20, right: 20, bottom: 40, left: 34 };
+            const chartW = width - padding.left - padding.right;
+            const chartH = height - padding.top - padding.bottom;
+            ctx.clearRect(0, 0, width, height);
+
+            if (series.length === 0) {
+                ctx.fillStyle = '#a89a9a';
+                ctx.font = '14px sans-serif';
+                ctx.fillText('当前筛选范围暂无数据', width / 2 - 70, height / 2);
+                legend.innerHTML = '';
+                return;
+            }
+
+            ctx.strokeStyle = '#efe3e3';
+            ctx.lineWidth = 1;
+            for (let i = 1; i <= 5; i++) {
+                const y = padding.top + chartH - (i / 5) * chartH;
+                ctx.beginPath();
+                ctx.moveTo(padding.left, y);
+                ctx.lineTo(width - padding.right, y);
+                ctx.stroke();
+                ctx.fillStyle = '#b49f9f';
+                ctx.font = '11px sans-serif';
+                ctx.fillText(String(i), 12, y + 4);
+            }
+
+            for (let d = 1; d <= 5; d++) {
+                const x = padding.left + ((d - 0.5) / 5) * chartW;
+                ctx.fillStyle = '#8f7f7f';
+                ctx.font = '12px sans-serif';
+                ctx.fillText(`第${d}天`, x - 14, height - 12);
+            }
+
+            if (mode === 'bar') {
+                const groupWidth = chartW / 5;
+                const barWidth = Math.min(24, (groupWidth / Math.max(1, series.length)) - 4);
+                series.forEach((s, idx) => {
+                    s.values.forEach((v, dayIdx) => {
+                        if (v <= 0) return;
+                        const x = padding.left + dayIdx * groupWidth + idx * (barWidth + 2) + 4;
+                        const y = padding.top + chartH - (v / 5) * chartH;
+                        const h = (v / 5) * chartH;
+                        const grad = ctx.createLinearGradient(0, y, 0, y + h);
+                        const base = palette[idx % palette.length];
+                        grad.addColorStop(0, base);
+                        grad.addColorStop(1, '#f7dede');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(x, y, barWidth, h);
+                    });
+                });
+            } else {
+                series.forEach((s, idx) => {
+                    const color = palette[idx % palette.length];
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = selectedCycleId === s.cycle.id ? 3 : 2;
+                    ctx.beginPath();
+                    s.values.forEach((v, dayIdx) => {
+                        const clamped = v <= 0 ? 0.2 : v;
+                        const x = padding.left + ((dayIdx + 0.5) / 5) * chartW;
+                        const y = padding.top + chartH - (clamped / 5) * chartH;
+                        if (dayIdx === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    });
+                    ctx.stroke();
+                });
+            }
+
+            legend.innerHTML = series.map((s, idx) => `
+                <span class="legend-chip" style="${selectedCycleId === s.cycle.id ? 'font-weight:700;' : ''}">
+                    <span class="legend-swatch" style="background:${palette[idx % palette.length]}"></span>
+                    ${s.cycle.start}
+                </span>
+            `).join('');
+        }
+
+        function exportSymptomChart() {
+            const canvas = document.getElementById('symptomChart');
+            if (!canvas) {
+                showToast('图表不可用');
+                return;
+            }
+            const mode = document.getElementById('chartMode')?.value || 'bar';
+            const start = document.getElementById('analysisStartDate')?.value || 'all';
+            const end = document.getElementById('analysisEndDate')?.value || 'all';
+            const metricLabelMap = { flow: 'flow', pain: 'pain', color: 'color' };
+            const metric = metricLabelMap[analysisMetric] || 'metric';
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `period-analysis-${metric}-${mode}-${start}-${end}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('图表已导出');
+        }
+
+        function saveReminder(key, value) {
+            if (!currentUser) return;
+            reminders[key] = value;
+            localStorage.setItem('reminders', JSON.stringify(reminders));
+            showToast('提醒设置已保存');
+        }
+
+        function loadReminders() {
+            if (reminders.prePeriod) document.getElementById('prePeriodDays').value = reminders.prePeriod;
+            if (reminders.follicular) document.getElementById('follicularReminder').checked = reminders.follicular;
+            if (reminders.ovulation) document.getElementById('ovulationReminder').checked = reminders.ovulation;
+            if (reminders.luteal) document.getElementById('lutealReminder').checked = reminders.luteal;
+            if (reminders.period) document.getElementById('periodReminder').checked = reminders.period;
+            const recordDateInput = document.getElementById('recordDate');
+            if (recordDateInput) {
+                recordDateInput.max = formatDate(new Date());
+                recordDateInput.value = formatDate(new Date());
+            }
+        }
+
+        function getNextPeriodDate() {
+            const cycleModel = getCycleModel();
+            const anchorStart = cycleModel.anchorStart;
+            if (!anchorStart) return null;
+            const lastPeriod = parseDateString(anchorStart);
+            const cycle = cycleModel.cycleDays;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            let nextPeriod = new Date(lastPeriod);
+            while (nextPeriod <= today) {
+                nextPeriod.setDate(nextPeriod.getDate() + cycle);
+            }
+            return nextPeriod;
+        }
+
+        function getOvulationDate() {
+            const cycleModel = getCycleModel();
+            const anchorStart = cycleModel.anchorStart;
+            if (!anchorStart) return null;
+            const lastPeriod = parseDateString(anchorStart);
+            const cycle = cycleModel.cycleDays;
+            const ovulationDay = cycle - 14;
+            let ovulation = new Date(lastPeriod);
+            ovulation.setDate(ovulation.getDate() + ovulationDay);
+            return ovulation;
+        }
+
+        function getDaysUntilDate(targetDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            targetDate.setHours(0, 0, 0, 0);
+            return Math.floor((targetDate - today) / 86400000);
+        }
+
+        function isTodayInOvulationRange() {
+            const cycleModel = getCycleModel();
+            const anchorStart = cycleModel.anchorStart;
+            if (!anchorStart) return false;
+            const lastPeriod = parseDateString(anchorStart);
+            const cycle = cycleModel.cycleDays;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const diffDays = Math.floor((today - lastPeriod) / 86400000);
+            const dayInCycle = ((diffDays % cycle) + cycle) % cycle;
+            return dayInCycle >= (cycle - 14) && dayInCycle < (cycle - 10);
+        }
+
+        function checkAndShowSmartReminders() {
+            const reminderEnabled = reminders.smartReminderEnabled;
+            if (reminderEnabled === false) return;
+            const cycleModel = getCycleModel();
+            if (!cycleModel.anchorStart) return;
+            const nextPeriod = getNextPeriodDate();
+            if (!nextPeriod) return;
+            const daysUntil = getDaysUntilDate(nextPeriod);
+            const preDays = parseInt(reminders.prePeriod || 3, 10);
+            const todayStr = formatDate(new Date());
+            const reminderKey = `smartReminder_${todayStr}`;
+            if (localStorage.getItem(reminderKey)) return;
+            let reminderType = null;
+            let title = '';
+            let desc = '';
+            let tips = [];
+            let icon = '🌸';
+            if (daysUntil === 0) {
+                reminderType = 'period_today';
+                icon = '🩸';
+                title = '生理期到来提醒';
+                desc = '今天是预计月经第一天，记得准备好卫生用品，注意保暖和休息哦~';
+                tips = ['建议更换卫生巾频率：白天2-3小时一次', '避免剧烈运动和重体力劳动', '可以适当热敷腹部缓解不适', '保持心情愉快，避免焦虑'];
+            } else if (daysUntil > 0 && daysUntil <= preDays) {
+                reminderType = 'pre_period';
+                icon = '🌺';
+                title = '经前提醒';
+                desc = `距离预计月经还有 ${daysUntil} 天，身体可能开始出现一些微妙变化~`;
+                tips = ['注意腹部保暖，避免受凉', '建议少吃生冷辛辣食物', '保证充足睡眠，减少熬夜', '适当运动促进血液循环'];
+            } else if (isTodayInOvulationRange()) {
+                reminderType = 'ovulation';
+                icon = '🌟';
+                title = '排卵期提示';
+                desc = '现在处于排卵期，身体抵抗力略有下降，请注意休息和卫生~';
+                tips = ['保持私处清洁干爽', '勤换卫生用品', '适当补充水分和维生素', '注意休息，避免过度劳累'];
+            }
+            if (reminderType) {
+                showSmartReminderModal(icon, title, desc, tips);
+                localStorage.setItem(reminderKey, 'true');
+                if (reminders.notificationEnabled && Notification.permission === 'granted') {
+                    sendBrowserNotification(title, desc);
+                }
+            }
+        }
+
+        function showSmartReminderModal(icon, title, desc, tips) {
+            document.getElementById('smartReminderIcon').textContent = icon;
+            document.getElementById('smartReminderTitle').textContent = title;
+            document.getElementById('smartReminderDesc').textContent = desc;
+            const tipList = document.getElementById('smartReminderTipList');
+            tipList.innerHTML = '';
+            tips.forEach(tip => {
+                const li = document.createElement('li');
+                li.textContent = tip;
+                tipList.appendChild(li);
+            });
+            const hint = document.getElementById('notificationPermissionHint');
+            if (Notification.permission === 'default') {
+                hint.innerHTML = `开启<a onclick="requestNotificationPermission()">浏览器通知</a>，可接收后台提醒`;
+            } else if (Notification.permission === 'denied') {
+                hint.innerHTML = '浏览器通知已被禁用，请在设置中开启';
+            } else {
+                hint.innerHTML = '';
+            }
+            document.getElementById('smartReminderModal').classList.add('active');
+        }
+
+        function closeSmartReminder() {
+            document.getElementById('smartReminderModal').classList.remove('active');
+        }
+
+        function requestNotificationPermission() {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    reminders.notificationEnabled = true;
+                    localStorage.setItem('reminders', JSON.stringify(reminders));
+                    showToast('已开启浏览器通知');
+                } else {
+                    showToast('通知权限被拒绝');
+                }
+            });
+        }
+
+        function sendBrowserNotification(title, body) {
+            if (Notification.permission !== 'granted') return;
+            try {
+                new Notification(title, {
+                    body: body,
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌸</text></svg>',
+                    tag: 'period-reminder',
+                    requireInteraction: true
+                });
+            } catch (e) {
+                console.log('Notification error:', e);
+            }
+        }
+
+        function updateNotificationUI() {
+            const btn = document.getElementById('notificationBtn');
+            const status = document.getElementById('notificationStatus');
+            if (!btn || !status) return;
+            if (Notification.permission === 'granted') {
+                btn.textContent = '已开启';
+                btn.style.background = '#e2f4e7';
+                btn.style.color = '#3f7a53';
+                status.textContent = '已开启桌面通知';
+            } else if (Notification.permission === 'denied') {
+                btn.textContent = '已禁用';
+                btn.style.background = '#ffe8e8';
+                btn.style.color = '#a04d4d';
+                status.textContent = '浏览器通知已被禁用';
+            } else {
+                btn.textContent = '开启通知';
+                btn.style.background = '';
+                btn.style.color = '';
+                status.textContent = '开启后可在后台接收提醒';
+            }
+        }
+
+        function toggleBrowserNotification() {
+            if (Notification.permission === 'granted') {
+                showToast('浏览器通知已开启，可正常接收');
+                return;
+            }
+            if (Notification.permission === 'denied') {
+                showToast('请在浏览器设置中开启通知权限');
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    reminders.notificationEnabled = true;
+                    localStorage.setItem('reminders', JSON.stringify(reminders));
+                    showToast('已开启浏览器通知');
+                    updateNotificationUI();
+                } else {
+                    showToast('通知权限被拒绝');
+                }
+            });
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        function openRegisterModal() {
+            document.getElementById('registerModal').classList.add('active');
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').classList.remove('active');
+            document.getElementById('registerUsername').value = '';
+            document.getElementById('registerNickname').value = '';
+            document.getElementById('registerAvatar').value = '🌷';
+            document.getElementById('registerPassword').value = '';
+            document.getElementById('registerConfirmPassword').value = '';
+        }
+
+        function openProfileModal() {
+            if (!ensureLogin('请先登录后设置资料')) return;
+            document.getElementById('profileNickname').value = currentUser.nickname || currentUser.username;
+            document.getElementById('profileAvatar').value = currentUser.avatar || '🌷';
+            document.getElementById('profileSmartReminder').checked = reminders.smartReminderEnabled !== false;
+            document.getElementById('profileModal').classList.add('active');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.remove('active');
+        }
+
+        function saveSmartReminderToggle(checked) {
+            reminders.smartReminderEnabled = checked;
+            localStorage.setItem('reminders', JSON.stringify(reminders));
+        }
+
+        function isStrongPassword(password) {
+            if (!password || password.length < 8) return false;
+            const hasLetter = /[a-zA-Z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            return hasLetter && hasNumber;
+        }
+
+        function switchToRegisterModal() {
+            closeLoginModal();
+            openRegisterModal();
+        }
+
+        async function submitLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            if (!username || !password) {
+                showToast('请输入用户名和密码');
+                return;
+            }
+            if (!isCloudEnabled || !supabaseClient) {
+                showToast('云同步未启用，请先配置云同步');
+                return;
+            }
+            const { data, error } = await supabaseClient
+                .from('app_kv')
+                .select('value')
+                .eq('key', 'users')
+                .maybeSingle();
+            if (error) {
+                showToast('登录验证失败');
+                return;
+            }
+            const allUsers = data?.value || [];
+            const matched = allUsers.find(u => u.username === username && u.password === password);
+            if (!matched) {
+                showToast('用户名或密码错误');
+                return;
+            }
+            const isAdmin = await validateAdminIdentity(matched.username);
+            currentUser = {
+                id: matched.id || matched.username,
+                username: matched.username,
+                nickname: matched.nickname || matched.username,
+                avatar: matched.avatar || '🌷',
+                isAdmin
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            closeLoginModal();
+            updateUserUI();
+            applyPermissions();
+            renderPosts();
+            showToast(`欢迎回来，${currentUser.username}`);
+        }
+
+        async function submitRegister() {
+            const username = document.getElementById('registerUsername').value.trim();
+            const nickname = document.getElementById('registerNickname').value.trim();
+            const avatar = document.getElementById('registerAvatar').value || '🌷';
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerConfirmPassword').value;
+            if (!username || !password) {
+                showToast('请输入用户名和密码');
+                return;
+            }
+            if (!isStrongPassword(password)) {
+                showToast('密码需至少8位，且包含字母和数字');
+                return;
+            }
+            if (password !== confirm) {
+                showToast('两次密码不一致');
+                return;
+            }
+            if (!isCloudEnabled || !supabaseClient) {
+                showToast('云同步未启用，请先配置云同步');
+                return;
+            }
+            const { data: existingData } = await supabaseClient
+                .from('app_kv')
+                .select('value')
+                .eq('key', 'users')
+                .maybeSingle();
+            const allUsers = existingData?.value || [];
+            if (allUsers.some(u => u.username === username)) {
+                showToast('用户名已存在');
+                return;
+            }
+            const newUser = {
+                id: Date.now(),
+                username,
+                nickname: nickname || username,
+                avatar,
+                password,
+                createdAt: new Date().toISOString()
+            };
+            allUsers.push(newUser);
+            const { error } = await supabaseClient
+                .from('app_kv')
+                .upsert({ key: 'users', value: allUsers }, { onConflict: 'key' });
+            if (error) {
+                showToast('注册失败，请重试');
+                return;
+            }
+            currentUser = {
+                id: newUser.id,
+                username,
+                nickname: newUser.nickname,
+                avatar,
+                isAdmin: false
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            closeRegisterModal();
+            updateUserUI();
+            applyPermissions();
+            renderPosts();
+            showToast('注册成功，已自动登录');
+        }
+
+        async function saveProfile() {
+            if (!ensureLogin('请先登录后设置资料')) return;
+            const nickname = document.getElementById('profileNickname').value.trim() || currentUser.username;
+            const avatar = document.getElementById('profileAvatar').value || '🌷';
+            if (!isCloudEnabled || !supabaseClient) {
+                showToast('云同步未启用');
+                return;
+            }
+            const { data } = await supabaseClient
+                .from('app_kv')
+                .select('value')
+                .eq('key', 'users')
+                .maybeSingle();
+            const allUsers = data?.value || [];
+            const updatedUsers = allUsers.map(u => {
+                if (u.username === currentUser.username) {
+                    return { ...u, nickname, avatar };
+                }
+                return u;
+            });
+            const { error } = await supabaseClient
+                .from('app_kv')
+                .upsert({ key: 'users', value: updatedUsers }, { onConflict: 'key' });
+            if (error) {
+                showToast('保存失败，请重试');
+                return;
+            }
+            currentUser.nickname = nickname;
+            currentUser.avatar = avatar;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            closeProfileModal();
+            updateUserUI();
+            renderPosts();
+            showToast('个人资料已更新');
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            activePostId = null;
+            updateUserUI();
+            applyPermissions();
+            switchTab('calendar');
+            renderPosts();
+            showToast('已退出登录');
+        }
+
+        function updateUserUI() {
+            const bar = document.getElementById('userStatusBar');
+            if (!bar) return;
+            if (currentUser) {
+                bar.innerHTML = `
+                    <span class="user-status-badge">${currentUser.avatar || '🌷'} ${currentUser.nickname || currentUser.username}</span>
+                    <button class="profile-btn" onclick="openProfileModal()">资料设置</button>
+                    <button class="logout-btn" onclick="logout()">退出登录</button>
+                `;
+            } else {
+                bar.innerHTML = `<span class="user-status-badge" onclick="openLoginModal()">未登录（点击登录）</span>`;
+            }
+            updateAdminEntryVisibility();
+        }
+
+        function applyPermissions() {
+            const recordBtn = document.querySelector('.record-submit');
+            const postBtn = document.querySelector('#community .post-btn');
+            const editBtn = document.querySelector('.edit-btn');
+            const reminderControls = document.querySelectorAll('#reminder input, #reminder select');
+            const canUse = !!currentUser;
+            if (recordBtn) {
+                recordBtn.disabled = !canUse;
+                recordBtn.style.opacity = canUse ? '1' : '0.55';
+                recordBtn.title = canUse ? '' : '请先登录后使用';
+            }
+            if (postBtn) {
+                postBtn.disabled = !canUse;
+                postBtn.style.opacity = canUse ? '1' : '0.55';
+                postBtn.title = canUse ? '' : '请先登录后发帖';
+            }
+            if (editBtn) {
+                editBtn.disabled = !canUse;
+                editBtn.style.opacity = canUse ? '1' : '0.55';
+                editBtn.title = canUse ? '' : '请先登录后编辑';
+            }
+            reminderControls.forEach(el => {
+                el.disabled = !canUse;
+                el.title = canUse ? '' : '请先登录后设置';
+            });
+        }
+
+        function ensureLogin(message = '请先登录') {
+            if (currentUser) return true;
+            showToast(message);
+            openLoginModal();
+            return false;
+        }
+
+        function formatDateTime(date) {
+            return `${formatDate(date)} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        }
+
+        function getCurrentDisplayName() {
+            if (!currentUser) return '匿名用户';
+            return currentUser.nickname || currentUser.username;
+        }
+
+        function isAdminUser() {
+            if (!currentUser) return false;
+            return currentUser.isAdmin === true;
+        }
+
+        async function validateAdminIdentity(username) {
+            if (!isCloudEnabled || !supabaseClient) return false;
+            const { data, error } = await supabaseClient
+                .from('app_kv')
+                .select('value')
+                .eq('key', 'admin_user')
+                .maybeSingle();
+            if (error || !data || !data.value) return false;
+            const adminConfig = data.value;
+            return adminConfig.username === username && adminConfig.is_admin === true;
+        }
+
+        function updateAdminEntryVisibility() {
+            const tab = document.getElementById('moderationTabBtn');
+            if (!tab) return;
+            tab.style.display = isAdminUser() ? 'inline-flex' : 'none';
+        }
+
+        function savePosts() {
+            localStorage.setItem('posts', JSON.stringify(posts));
+            savePostsToCloud();
+        }
+
+        function initCloudClient() {
+            isCloudEnabled = false;
+            supabaseClient = null;
+            if (!cloudConfig || !cloudConfig.url || !cloudConfig.anonKey) return;
+            if (!window.supabase || !window.supabase.createClient) return;
+            try {
+                supabaseClient = window.supabase.createClient(cloudConfig.url, cloudConfig.anonKey);
+                isCloudEnabled = true;
+            } catch (error) {
+                isCloudEnabled = false;
+                supabaseClient = null;
+            }
+        }
+
+        function normalizePostData(inputPosts) {
+            return (inputPosts || []).map(p => ({
+                ...p,
+                comments: normalizeCommentTree(Array.isArray(p.comments) ? p.comments : []),
+                authorUsername: p.authorUsername || '',
+                reports: Array.isArray(p.reports) ? p.reports : [],
+                images: Array.isArray(p.images) ? p.images.slice(0, 3) : []
+            }));
+        }
+
+        function normalizeCommentTree(comments) {
+            return (comments || []).map(comment => ({
+                ...comment,
+                status: comment.status || COMMENT_STATUS.approved,
+                replies: (comment.replies || []).map(reply => ({
+                    ...reply,
+                    status: reply.status || COMMENT_STATUS.approved
+                }))
+            }));
+        }
+
+        async function loadPostsFromCloud() {
+            if (!isCloudEnabled || !supabaseClient) return false;
+            const { data, error } = await supabaseClient
+                .from('app_kv')
+                .select('value')
+                .eq('key', 'posts')
+                .maybeSingle();
+            if (error) {
+                showToast('云端读取失败，已使用本地数据');
+                return false;
+            }
+            if (data && Array.isArray(data.value)) {
+                posts = normalizePostData(data.value);
+                localStorage.setItem('posts', JSON.stringify(posts));
+                return true;
+            }
+            return false;
+        }
+
+        async function savePostsToCloud() {
+            if (!isCloudEnabled || !supabaseClient) return;
+            const payload = {
+                key: 'posts',
+                value: posts,
+                updated_at: new Date().toISOString()
+            };
+            const { error } = await supabaseClient.from('app_kv').upsert(payload);
+            if (error) {
+                showToast('云端同步失败，请检查云配置');
+            }
+        }
+
+        function updateCloudStatus() {
+            const el = document.getElementById('cloudStatusText');
+            if (!el) return;
+            if (isCloudEnabled) {
+                el.textContent = '当前：云同步模式（同项目用户可互相可见）';
+            } else {
+                el.textContent = '当前：本地模式（仅当前浏览器可见）';
+            }
+        }
+
+        function openCloudModal() {
+            document.getElementById('cloudUrl').value = cloudConfig.url || '';
+            document.getElementById('cloudAnonKey').value = cloudConfig.anonKey || '';
+            document.getElementById('cloudModal').classList.add('active');
+        }
+
+        function closeCloudModal() {
+            document.getElementById('cloudModal').classList.remove('active');
+        }
+
+        async function saveCloudConfig() {
+            const url = document.getElementById('cloudUrl').value.trim();
+            const anonKey = document.getElementById('cloudAnonKey').value.trim();
+            if (!url || !anonKey) {
+                showToast('请填写完整 Supabase 配置');
+                return;
+            }
+            cloudConfig = { url, anonKey };
+            localStorage.setItem('cloudSyncConfig', JSON.stringify(cloudConfig));
+            initCloudClient();
+            if (isCloudEnabled) {
+                await loadPostsFromCloud();
+                await loadUsersFromCloud();
+                if (currentUser) {
+                    currentUser.isAdmin = await validateAdminIdentity(currentUser.username);
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+                await savePostsToCloud();
+                renderPosts();
+                updateUserUI();
+                updateCloudStatus();
+                closeCloudModal();
+                showToast('云同步已启用');
+            } else {
+                showToast('云配置无效，请重试');
+            }
+        }
+
+        async function loadUsersFromCloud() {
+            if (!isCloudEnabled || !supabaseClient) return;
+            const { data, error } = await supabaseClient
+                .from('app_kv')
+                .select('value')
+                .eq('key', 'users')
+                .maybeSingle();
+            if (error || !data) return;
+            if (Array.isArray(data.value)) {
+                localStorage.setItem('cloudUsers', JSON.stringify(data.value));
+            }
+        }
+
+        function disableCloudSync() {
+            cloudConfig = {};
+            localStorage.removeItem('cloudSyncConfig');
+            initCloudClient();
+            if (currentUser) {
+                currentUser.isAdmin = false;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            updateUserUI();
+            updateCloudStatus();
+            closeCloudModal();
+            showToast('已切换为本地模式');
+        }
+
+        function renderDraftPostImages() {
+            const preview = document.getElementById('postImagePreview');
+            if (!preview) return;
+            preview.innerHTML = draftPostImages.map((img, idx) => `
+                <div class="upload-preview-item">
+                    <img src="${img}" alt="preview-${idx}">
+                    <button class="upload-remove" onclick="removeDraftImage(${idx})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function removeDraftImage(index) {
+            draftPostImages = draftPostImages.filter((_, i) => i !== index);
+            renderDraftPostImages();
+        }
+
+        function handlePostImageUpload(event) {
+            const files = Array.from(event.target.files || []);
+            if (files.length === 0) return;
+            const remain = 3 - draftPostImages.length;
+            if (remain <= 0) {
+                showToast('最多上传3张图片');
+                event.target.value = '';
+                return;
+            }
+            files.slice(0, remain).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const base64 = e.target.result;
+                    if (typeof base64 === 'string') {
+                        draftPostImages.push(base64);
+                        draftPostImages = draftPostImages.slice(0, 3);
+                        renderDraftPostImages();
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+            if (files.length > remain) {
+                showToast('最多上传3张图片，超出部分已忽略');
+            }
+            event.target.value = '';
+        }
+
+        function openImageViewer(src) {
+            const modal = document.getElementById('imageViewerModal');
+            const img = document.getElementById('imageViewerImg');
+            if (!modal || !img) return;
+            img.src = src;
+            modal.classList.add('active');
+        }
+
+        function closeImageViewer(event) {
+            if (event && event.target && event.target.id !== 'imageViewerModal') return;
+            const modal = document.getElementById('imageViewerModal');
+            const img = document.getElementById('imageViewerImg');
+            if (modal) modal.classList.remove('active');
+            if (img) img.src = '';
+        }
+
+        function getCommentCount(post) {
+            if (!post.comments) return 0;
+            const visibleComment = c => isAdminUser() ? true : c.status === COMMENT_STATUS.approved;
+            const visibleReply = r => isAdminUser() ? true : r.status === COMMENT_STATUS.approved;
+            return post.comments.reduce((sum, c) => {
+                if (!visibleComment(c)) return sum;
+                return sum + 1 + (c.replies || []).filter(visibleReply).length;
+            }, 0);
+        }
+
+        function isPostAuthor(post) {
+            if (!currentUser || !post) return false;
+            return post.authorUsername === currentUser.username;
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('communityContent');
+            if (!container) return;
+            if (activePostId) {
+                const post = posts.find(p => String(p.id) === String(activePostId));
+                if (!post) {
+                    activePostId = null;
+                    return renderPosts();
+                }
+                container.innerHTML = `
+                    <button class="post-detail-back" onclick="backToPostList()">← 返回帖子列表</button>
+                    <div class="post-item">
+                        <div class="post-header">
+                            <div class="post-author">
+                                <div class="post-avatar">${post.avatar || '🌷'}</div>
+                                <span class="post-name">${post.author}</span>
+                            </div>
+                            <span class="post-time">${post.time}</span>
+                        </div>
+                        <p class="post-content">${post.content}</p>
+                        ${(post.images && post.images.length) ? `
+                            <div class="post-image-row">
+                                ${post.images.map(img => `<img class="post-image" src="${img}" alt="post-image" onclick="openImageViewer('${img}')">`).join('')}
+                            </div>
+                        ` : ''}
+                        <div class="post-actions">
+                            <span class="post-action" onclick="likePost(${post.id})">❤️ ${post.likes || 0}</span>
+                            <span class="post-action">💬 ${getCommentCount(post)}</span>
+                            <span class="post-action" onclick="reportPost(${post.id})">🚩 举报(${(post.reports || []).length})</span>
+                            ${isPostAuthor(post) ? `<span class="post-action" onclick="deletePost(${post.id})">🗑 删除</span>` : ''}
+                        </div>
+                        <div class="comment-section">
+                            <div class="login-hint">${currentUser ? `当前账号：${currentUser.avatar || '🌷'} ${getCurrentDisplayName()}` : '未登录只能查看评论，登录后可评论回复'}</div>
+                            <div class="comment-input-wrap">
+                                <input id="commentInput" placeholder="写下你的评论..." ${currentUser ? '' : 'disabled'}>
+                                <button class="comment-btn" onclick="submitComment(${post.id})" ${currentUser ? '' : 'disabled'}>评论</button>
+                            </div>
+                            <div id="commentList">${renderCommentListHtml(post)}</div>
+                        </div>
+                    </div>
+                `;
+                renderAdminReportPanel();
+                renderModerationPanel();
+                return;
+            }
+            container.innerHTML = `<ul class="post-list" id="postList"></ul>`;
+            const list = document.getElementById('postList');
+            list.innerHTML = posts.map(post => `
+                <li class="post-item" onclick="openPostDetail(${post.id})">
+                    <div class="post-header">
+                        <div class="post-author">
+                            <div class="post-avatar">${post.avatar || '🌷'}</div>
+                            <span class="post-name">${post.author}</span>
+                        </div>
+                        <span class="post-time">${post.time}</span>
+                    </div>
+                    <p class="post-content">${post.content}</p>
+                    ${(post.images && post.images.length) ? `<img class="post-list-thumb" src="${post.images[0]}" alt="post-thumb" onclick="event.stopPropagation(); openImageViewer('${post.images[0]}')">` : ''}
+                    <div class="post-actions">
+                        <span class="post-action" onclick="event.stopPropagation(); likePost(${post.id})">❤️ ${post.likes || 0}</span>
+                        <span class="post-action">💬 ${getCommentCount(post)}</span>
+                        <span class="post-action" onclick="event.stopPropagation(); reportPost(${post.id})">🚩 举报(${(post.reports || []).length})</span>
+                        ${(isPostAuthor(post) || (isAdminUser() && currentUser.username !== post.authorUsername)) ? `<span class="post-action" style="color:#d9534f;" onclick="event.stopPropagation(); openDeleteConfirmModal('post', ${post.id})">🗑 删除</span>` : ''}
+                        <span class="post-action">查看详情</span>
+                    </div>
+                </li>
+            `).join('');
+            renderAdminReportPanel();
+            renderModerationPanel();
+        }
+
+        function renderAdminReportPanel() {
+            const panel = document.getElementById('adminPanel');
+            if (!panel) return;
+            if (!isAdminUser()) {
+                panel.innerHTML = '';
+                return;
+            }
+            const sorted = [...posts]
+                .map(post => ({ post, reportCount: (post.reports || []).length }))
+                .filter(item => item.reportCount > 0)
+                .sort((a, b) => b.reportCount - a.reportCount);
+            if (sorted.length === 0) {
+                panel.innerHTML = `
+                    <div class="admin-panel">
+                        <h4>🛡 举报管理</h4>
+                        <div class="empty-tip">暂无举报记录</div>
+                    </div>
+                `;
+                return;
+            }
+            panel.innerHTML = `
+                <div class="admin-panel">
+                    <h4>🛡 举报管理（按举报数排序）</h4>
+                    ${sorted.slice(0, 5).map(item => {
+                        const latestReports = (item.post.reports || []).slice(-3).reverse();
+                        return `
+                            <div class="admin-report-item">
+                                <div class="admin-report-meta">帖子ID: ${item.post.id} | 作者: ${item.post.author} | 举报数: ${item.reportCount}</div>
+                                <div class="admin-report-detail">${item.post.content.slice(0, 70)}${item.post.content.length > 70 ? '...' : ''}</div>
+                                <div class="admin-report-detail" style="margin-top:6px;">
+                                    ${latestReports.map(r => `• ${r.time} ${r.reporter} 举报：${r.reason || '未填写'}${r.note ? `（${r.note}）` : ''}`).join('<br>')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function renderCommentListHtml(post) {
+            const comments = (post.comments || []).filter(c => isAdminUser() || c.status === COMMENT_STATUS.approved);
+            if (comments.length === 0) {
+                return '<div class="empty-tip">暂无评论，来发表第一条吧</div>';
+            }
+            const statusLabel = status => ({
+                [COMMENT_STATUS.pending]: '待审核',
+                [COMMENT_STATUS.approved]: '已通过',
+                [COMMENT_STATUS.rejected]: '已驳回'
+            }[status] || '未知');
+            return comments.map(comment => `
+                <div class="comment-item">
+                    <div class="comment-meta">
+                        ${comment.avatar || '🌷'} ${comment.author} · ${comment.time}${isAdminUser() ? ` · ${statusLabel(comment.status)}` : ''}
+                        ${isAdminUser() && currentUser.username !== comment.authorUsername ? `<span class="post-action" style="margin-left:8px;color:#d9534f;" onclick="openDeleteConfirmModal('comment', ${comment.id}, ${post.id})">🗑 删除</span>` : ''}
+                    </div>
+                    <div class="comment-content">${comment.content}</div>
+                    <span class="post-action" onclick="toggleReplyInput(${post.id}, '${comment.id}')">回复</span>
+                    <div id="replyInput-${comment.id}" class="reply-input">
+                        <input id="replyText-${comment.id}" placeholder="回复 ${comment.author}..." ${currentUser ? '' : 'disabled'}>
+                        <button class="comment-btn" onclick="submitReply(${post.id}, '${comment.id}')" ${currentUser ? '' : 'disabled'}>发送</button>
+                    </div>
+                    <div class="reply-list">
+                        ${(comment.replies || []).filter(r => isAdminUser() || r.status === COMMENT_STATUS.approved).map(reply => `
+                            <div class="comment-item" style="margin-bottom:6px;">
+                                <div class="comment-meta">
+                                    ${reply.avatar || '🌷'} ${reply.author} 回复 ${reply.replyTo} · ${reply.time}${isAdminUser() ? ` · ${statusLabel(reply.status)}` : ''}
+                                    ${isAdminUser() && currentUser.username !== reply.authorUsername ? `<span class="post-action" style="margin-left:8px;color:#d9534f;" onclick="openDeleteConfirmModal('reply', ${reply.id}, ${post.id})">🗑 删除</span>` : ''}
+                                </div>
+                                <div class="comment-content">${reply.content}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openPostDetail(id) {
+            activePostId = id;
+            renderPosts();
+        }
+
+        function backToPostList() {
+            activePostId = null;
+            renderPosts();
+        }
+
+        function likePost(id) {
+            const post = posts.find(p => Number(p.id) === Number(id));
+            if (post) {
+                post.likes = (post.likes || 0) + 1;
+                savePosts();
+                renderPosts();
+                showToast('点赞成功');
+            }
+        }
+
+        function openReportModal(postId) {
+            pendingReportPostId = postId;
+            document.getElementById('reportReason').value = '垃圾广告';
+            document.getElementById('reportNote').value = '';
+            document.getElementById('reportModal').classList.add('active');
+        }
+
+        function closeReportModal() {
+            pendingReportPostId = null;
+            document.getElementById('reportModal').classList.remove('active');
+        }
+
+        function submitReport() {
+            if (!pendingReportPostId) return;
+            const post = posts.find(p => Number(p.id) === Number(pendingReportPostId));
+            if (!post) {
+                closeReportModal();
+                return;
+            }
+            const reason = document.getElementById('reportReason').value;
+            const note = document.getElementById('reportNote').value.trim();
+            post.reports = post.reports || [];
+            post.reports.push({
+                reporter: currentUser ? currentUser.username : 'guest',
+                reason,
+                note,
+                time: formatDateTime(new Date())
+            });
+            savePosts();
+            closeReportModal();
+            renderPosts();
+            showToast('举报已提交，我们会关注该内容');
+        }
+
+        function reportPost(id) {
+            openReportModal(id);
+        }
+
+        function openDeleteConfirmModal(type, id, parentId = null) {
+            pendingDeleteType = type;
+            pendingDeleteId = id;
+            pendingDeleteParentId = parentId;
+            let message = '';
+            if (type === 'post') {
+                message = '确定要删除这条帖子吗？<br>删除后将无法恢复，所有评论也会一并消失。';
+            } else if (type === 'comment') {
+                message = '确定要删除这条评论吗？<br>删除后将无法恢复。';
+            } else if (type === 'reply') {
+                message = '确定要删除这条回复吗？<br>删除后将无法恢复。';
+            }
+            document.getElementById('deleteConfirmMessage').innerHTML = message;
+            document.getElementById('deleteConfirmModal').classList.add('active');
+        }
+
+        function closeDeleteConfirmModal() {
+            document.getElementById('deleteConfirmModal').classList.remove('active');
+            pendingDeleteType = null;
+            pendingDeleteId = null;
+            pendingDeleteParentId = null;
+        }
+
+        async function confirmDelete() {
+            if (!pendingDeleteType || !pendingDeleteId) {
+                closeDeleteConfirmModal();
+                return;
+            }
+            let deleted = false;
+            if (pendingDeleteType === 'post') {
+                const postIndex = posts.findIndex(p => Number(p.id) === Number(pendingDeleteId));
+                if (postIndex !== -1) {
+                    const post = posts[postIndex];
+                    if (currentUser && currentUser.username === post.authorUsername) {
+                        showToast('不能删除自己的帖子');
+                        closeDeleteConfirmModal();
+                        return;
+                    }
+                    posts.splice(postIndex, 1);
+                    if (Number(activePostId) === Number(pendingDeleteId)) activePostId = null;
+                    deleted = true;
+                }
+            } else if (pendingDeleteType === 'comment') {
+                const post = posts.find(p => Number(p.id) === Number(pendingDeleteParentId));
+                if (post && post.comments) {
+                    const commentIndex = post.comments.findIndex(c => Number(c.id) === Number(pendingDeleteId));
+                    if (commentIndex !== -1) {
+                        if (currentUser && currentUser.username === post.comments[commentIndex].authorUsername) {
+                            showToast('不能删除自己的评论');
+                            closeDeleteConfirmModal();
+                            return;
+                        }
+                        post.comments.splice(commentIndex, 1);
+                        deleted = true;
+                    }
+                }
+            } else if (pendingDeleteType === 'reply') {
+                const post = posts.find(p => Number(p.id) === Number(pendingDeleteParentId));
+                if (post && post.comments) {
+                    for (let comment of post.comments) {
+                        if (comment.replies) {
+                            const replyIndex = comment.replies.findIndex(r => Number(r.id) === Number(pendingDeleteId));
+                            if (replyIndex !== -1) {
+                                if (currentUser && currentUser.username === comment.replies[replyIndex].authorUsername) {
+                                    showToast('不能删除自己的回复');
+                                    closeDeleteConfirmModal();
+                                    return;
+                                }
+                                comment.replies.splice(replyIndex, 1);
+                                deleted = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (deleted) {
+                await savePosts();
+                renderPosts();
+                showToast('删除成功');
+            }
+            closeDeleteConfirmModal();
+        }
+
+        async function savePosts() {
+            localStorage.setItem('posts', JSON.stringify(posts));
+            await savePostsToCloud();
+        }
+
+        function collectModerationItems() {
+            const items = [];
+            posts.forEach(post => {
+                (post.comments || []).forEach(comment => {
+                    items.push({
+                        type: 'comment',
+                        postId: post.id,
+                        id: comment.id,
+                        author: comment.author,
+                        content: comment.content,
+                        time: comment.time,
+                        status: comment.status || COMMENT_STATUS.approved,
+                        postContent: post.content || ''
+                    });
+                    (comment.replies || []).forEach(reply => {
+                        items.push({
+                            type: 'reply',
+                            postId: post.id,
+                            parentId: comment.id,
+                            id: reply.id,
+                            author: reply.author,
+                            content: reply.content,
+                            time: reply.time,
+                            status: reply.status || COMMENT_STATUS.approved,
+                            postContent: post.content || ''
+                        });
+                    });
+                });
+            });
+            return items.sort((a, b) => (a.time < b.time ? 1 : -1));
+        }
+
+        function renderModerationPanel() {
+            const list = document.getElementById('moderationList');
+            if (!list) return;
+            if (!isAdminUser()) {
+                list.innerHTML = '<div class="empty-tip">仅管理员可查看该页面</div>';
+                return;
+            }
+            const filter = document.getElementById('moderationFilter')?.value || 'all';
+            const searchText = (document.getElementById('moderationSearch')?.value || '').trim().toLowerCase();
+            const items = collectModerationItems().filter(item => {
+                if (filter !== 'all' && item.status !== filter) return false;
+                if (!searchText) return true;
+                return (
+                    String(item.postId).toLowerCase().includes(searchText) ||
+                    (item.author || '').toLowerCase().includes(searchText) ||
+                    (item.content || '').toLowerCase().includes(searchText) ||
+                    (item.postContent || '').toLowerCase().includes(searchText)
+                );
+            });
+            if (items.length === 0) {
+                list.innerHTML = '<div class="empty-tip">暂无符合条件的评论内容</div>';
+                return;
+            }
+            list.innerHTML = items.map(item => `
+                <div class="mod-item">
+                    <div class="mod-meta">
+                        ${item.type === 'comment' ? '评论' : '回复'} · 帖子#${item.postId} · ${item.author} · ${item.time}
+                        <span class="mod-status ${item.status}">${getStatusText(item.status)}</span>
+                    </div>
+                    <div class="mod-content">${item.content}</div>
+                    <div class="mod-actions">
+                        <button class="mod-approve" onclick="setModerationStatus('${item.type}', ${item.postId}, '${item.id}', '${item.parentId || ''}', 'approved')">通过</button>
+                        <button class="mod-reject" onclick="setModerationStatus('${item.type}', ${item.postId}, '${item.id}', '${item.parentId || ''}', 'rejected')">驳回</button>
+                        <button class="mod-delete" onclick="deleteModerationItem('${item.type}', ${item.postId}, '${item.id}', '${item.parentId || ''}')">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setModerationStatus(type, postId, itemId, parentId, status) {
+            const post = posts.find(p => Number(p.id) === Number(postId));
+            if (!post) return;
+            if (type === 'comment') {
+                const comment = (post.comments || []).find(c => c.id === itemId);
+                if (comment) comment.status = status;
+            } else {
+                const comment = (post.comments || []).find(c => c.id === parentId);
+                const reply = comment ? (comment.replies || []).find(r => r.id === itemId) : null;
+                if (reply) reply.status = status;
+            }
+            savePosts();
+            renderPosts();
+            renderModerationPanel();
+            showToast(`已更新为${getStatusText(status)}`);
+        }
+
+        function deleteModerationItem(type, postId, itemId, parentId) {
+            const post = posts.find(p => Number(p.id) === Number(postId));
+            if (!post) return;
+            if (type === 'comment') {
+                post.comments = (post.comments || []).filter(c => c.id !== itemId);
+            } else {
+                const comment = (post.comments || []).find(c => c.id === parentId);
+                if (comment) {
+                    comment.replies = (comment.replies || []).filter(r => r.id !== itemId);
+                }
+            }
+            savePosts();
+            renderPosts();
+            renderModerationPanel();
+            showToast('已删除该条内容');
+        }
+
+        function bulkApprovePending() {
+            if (!isAdminUser()) {
+                showToast('仅管理员可操作');
+                return;
+            }
+            let count = 0;
+            posts.forEach(post => {
+                (post.comments || []).forEach(comment => {
+                    if ((comment.status || COMMENT_STATUS.approved) === COMMENT_STATUS.pending) {
+                        comment.status = COMMENT_STATUS.approved;
+                        count++;
+                    }
+                    (comment.replies || []).forEach(reply => {
+                        if ((reply.status || COMMENT_STATUS.approved) === COMMENT_STATUS.pending) {
+                            reply.status = COMMENT_STATUS.approved;
+                            count++;
+                        }
+                    });
+                });
+            });
+            if (count === 0) {
+                showToast('当前没有待审核内容');
+                return;
+            }
+            savePosts();
+            renderPosts();
+            renderModerationPanel();
+            showToast(`已批量通过 ${count} 条待审核内容`);
+        }
+
+        function toggleReplyInput(postId, commentId) {
+            if (!ensureLogin('请先登录后再回复')) return;
+            const input = document.getElementById(`replyInput-${commentId}`);
+            if (input) input.classList.toggle('active');
+        }
+
+        function submitComment(postId) {
+            if (!ensureLogin('请先登录后发表评论')) return;
+            const input = document.getElementById('commentInput');
+            if (!input) return;
+            const content = input.value.trim();
+            if (!content) {
+                showToast('评论内容不能为空');
+                return;
+            }
+            const post = posts.find(p => Number(p.id) === Number(postId));
+            if (!post) return;
+            post.comments.unshift({
+                id: `c-${Date.now()}`,
+                author: getCurrentDisplayName(),
+                avatar: currentUser.avatar || '🌷',
+                authorUsername: currentUser.username,
+                content,
+                time: formatDateTime(new Date()),
+                status: COMMENT_STATUS.pending,
+                replies: []
+            });
+            savePosts();
+            renderPosts();
+            showToast('评论已提交，等待审核通过');
+        }
+
+        function submitReply(postId, commentId) {
+            if (!ensureLogin('请先登录后再回复')) return;
+            const input = document.getElementById(`replyText-${commentId}`);
+            const content = input ? input.value.trim() : '';
+            if (!content) {
+                showToast('回复内容不能为空');
+                return;
+            }
+            const post = posts.find(p => Number(p.id) === Number(postId));
+            if (!post) return;
+            const comment = (post.comments || []).find(c => c.id === commentId);
+            if (!comment) return;
+            comment.replies = comment.replies || [];
+            comment.replies.push({
+                id: `r-${Date.now()}`,
+                author: getCurrentDisplayName(),
+                avatar: currentUser.avatar || '🌷',
+                authorUsername: currentUser.username,
+                replyTo: comment.author,
+                content,
+                time: formatDateTime(new Date()),
+                status: COMMENT_STATUS.pending
+            });
+            savePosts();
+            renderPosts();
+            showToast('回复已提交，等待审核通过');
+        }
+
+        function openPostModal() {
+            if (!ensureLogin('请先登录后发帖')) return;
+            draftPostImages = [];
+            renderDraftPostImages();
+            document.getElementById('postModal').classList.add('active');
+        }
+
+        function closePostModal() {
+            document.getElementById('postModal').classList.remove('active');
+            document.getElementById('postContent').value = '';
+            const input = document.getElementById('postImageInput');
+            if (input) input.value = '';
+            draftPostImages = [];
+            renderDraftPostImages();
+        }
+
+        function submitPost() {
+            if (!ensureLogin('请先登录后发帖')) return;
+            const content = document.getElementById('postContent').value.trim();
+            if (!content) {
+                showToast('请输入内容');
+                return;
+            }
+            posts.unshift({
+                id: Date.now(),
+                author: getCurrentDisplayName(),
+                avatar: currentUser.avatar || '🌷',
+                authorUsername: currentUser.username,
+                content,
+                time: formatDateTime(new Date()),
+                likes: 0,
+                comments: [],
+                reports: [],
+                images: [...draftPostImages]
+            });
+            savePosts();
+            renderPosts();
+            closePostModal();
+            showToast('发布成功');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+    </script>
+</body>
+</html>
